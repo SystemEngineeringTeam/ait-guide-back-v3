@@ -1,0 +1,18 @@
+{
+  "go.useLanguageServer": true,
+  "go.lintTool": "golangci-lint",
+  "go.lintFlags": ["--fast"],
+  "go.formatTool": "goimports",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "[go]": {
+    "editor.defaultFormatter": "golang.go",
+    "editor.tabSize": 4,
+    "editor.insertSpaces": false
+  },
+  "[go.mod]": {
+    "editor.defaultFormatter": "golang.go"
+  }
+}
