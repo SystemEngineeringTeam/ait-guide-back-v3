@@ -25,12 +25,14 @@
 ### buildings（建物）
 
 | カラム名 | 型 | NULL | 説明 |
-|---------|-----|------|------|
+| ------ | --- | ---- | --- |
 | id | SERIAL | NOT NULL | 主キー |
 | name | VARCHAR(200) | NOT NULL | 建物名 |
 | description | TEXT | NULL | 建物説明 |
+| affiliation | VARCHAR(100) | NULL | 所属 |
 
 **制約:**
+
 - PRIMARY KEY (id)
 
 **インデックス:** なし（小規模データのため）
