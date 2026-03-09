@@ -1,3 +1,4 @@
+// Package postgres はPostgreSQL/PostGIS/pgRoutingを用いたリポジトリ実装を提供する。
 package postgres
 
 import (

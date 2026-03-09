@@ -1,3 +1,4 @@
+// Package usecase はアプリケーションのユースケースを提供する。
 package usecase
 
 import (

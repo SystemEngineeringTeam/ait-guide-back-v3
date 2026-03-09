@@ -1,3 +1,4 @@
+// Package service はドメインサービスを提供する。
 package service
 
 import "errors"

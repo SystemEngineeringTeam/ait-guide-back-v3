@@ -1,3 +1,4 @@
+// Package repository はドメイン層のリポジトリインターフェースを定義する。
 package repository
 
 import (

@@ -1,3 +1,4 @@
+// Package handler はHTTPハンドラーとルーティングを提供する。
 package handler
 
 import (

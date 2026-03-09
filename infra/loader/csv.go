@@ -1,3 +1,4 @@
+// Package loader はCSVファイルからのデータ読み込みを提供する。
 package loader
 
 import (

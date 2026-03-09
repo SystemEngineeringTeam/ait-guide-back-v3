@@ -1,3 +1,4 @@
+// Package model はドメインのエンティティと値オブジェクトを定義する。
 package model
 
 // Building は建物エンティティ。

@@ -1,3 +1,4 @@
+// Package main はサーバーのエントリポイントを提供する。
 package main
 
 import (
