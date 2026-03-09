@@ -220,12 +220,16 @@ func (s *CSVSeeder) SeedPhotos(ctx context.Context, path string) error {
 	return nil
 }
 
-func readCSV(path string) ([][]string, error) {
+func readCSV(path string) (_ [][]string, err error) {
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open %s: %w", path, err)
 	}
-	defer f.Close()
+	defer func() {
+		if cerr := f.Close(); cerr != nil && err == nil {
+			err = fmt.Errorf("failed to close %s: %w", path, cerr)
+		}
+	}()
 
 	reader := csv.NewReader(f)
 	records, err := reader.ReadAll()

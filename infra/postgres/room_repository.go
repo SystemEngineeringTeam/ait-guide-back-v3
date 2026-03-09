@@ -38,7 +38,6 @@ func (r *RoomRepository) FindAll(ctx context.Context, filter repository.RoomFilt
 	if filter.RoomType != nil {
 		query += fmt.Sprintf(` AND room_type = $%d`, argIdx)
 		args = append(args, *filter.RoomType)
-		argIdx++
 	}
 
 	query += ` ORDER BY id`
