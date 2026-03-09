@@ -54,12 +54,12 @@ func (h *NodeHandler) List(c *gin.Context) {
 	}
 
 	type nodeResp struct {
-		NodeID     string       `json:"node_id"`
-		Lat        float64      `json:"lat"`
-		Lng        float64      `json:"lng"`
+		NodeID     string         `json:"node_id"`
+		Lat        float64        `json:"lat"`
+		Lng        float64        `json:"lng"`
 		NodeType   model.NodeType `json:"node_type"`
-		BuildingID *int         `json:"building_id,omitempty"`
-		Floor      *int         `json:"floor,omitempty"`
+		BuildingID *int           `json:"building_id,omitempty"`
+		Floor      *int           `json:"floor,omitempty"`
 	}
 	result := make([]nodeResp, len(nodes))
 	for i, n := range nodes {

@@ -10,7 +10,7 @@ type RoutePoint struct {
 // Route は探索結果の経路を表す。
 type Route struct {
 	Points        []RoutePoint
-	TotalDistance  float64
+	TotalDistance float64
 	TotalCost     float64
 }
 
