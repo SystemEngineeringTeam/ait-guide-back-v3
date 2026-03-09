@@ -1,8 +1,8 @@
 {
   "go.useLanguageServer": true,
   "go.lintTool": "golangci-lint",
-  "go.lintFlags": ["--fast"],
-  "go.formatTool": "goimports",
+  "go.lintFlags": ["--config=${workspaceFolder}/.golangci.toml", "--fast"],
+  "go.formatTool": "default",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.organizeImports": "explicit"
