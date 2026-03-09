@@ -105,6 +105,15 @@ go mod tidy
 # 開発サーバー起動
 go run cmd/server/main.go
 
+# フォーマッター実行
+go fmt ./...
+
+# 静的チェック
+go vet ./...
+
+# リンター実行
+golangci-lint run
+
 # テスト実行
 go test ./...
 
