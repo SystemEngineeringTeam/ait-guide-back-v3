@@ -33,112 +33,68 @@
 
 ## アーキテクチャ
 
-ドメイン駆動設計（DDD）を意識したレイヤードアーキテクチャを採用。
+シンプルな4層レイヤードアーキテクチャを採用。
 
 ### レイヤー構成
 
 ```sh
 ┌─────────────────────────────────────────┐
-│           Interfaces（外部との境界）      │
-│   HTTPハンドラー、DTO、リクエスト検証      │
+│           Handler（外部との境界）         │
+│   HTTPハンドラー、ルーティング、ミドルウェア │
 ├─────────────────────────────────────────┤
-│           Application（ユースケース）     │
+│           Usecase（ユースケース）         │
 │   アプリケーションサービス、トランザクション │
 ├─────────────────────────────────────────┤
 │           Domain（ビジネスロジック）       │
-│   エンティティ、値オブジェクト、ドメインサービス │
+│   エンティティ、値オブジェクト、リポジトリIF │
 ├─────────────────────────────────────────┤
-│           Infrastructure（技術詳細）      │
-│   リポジトリ実装、DB接続、外部API連携      │
+│           Infra（技術詳細）              │
+│   リポジトリ実装、DB接続、CSV読み込み      │
 └─────────────────────────────────────────┘
 ```
 
 ### 依存関係のルール
 
-- 上位レイヤーは下位レイヤーに依存可能
-- 下位レイヤーは上位レイヤーに依存不可
-- Domain層は他のレイヤーに依存しない（純粋なビジネスロジック）
-- Infrastructure層はDomain層のインターフェースを実装（依存性逆転）
+- Handler → Usecase → Domain の一方向依存
+- Domain層は他のレイヤーに依存しない
+- Infra層はDomain層のインターフェースを実装（依存性逆転）
 
 ## ディレクトリ構成
 
 ```sh
 .
-├── cmd/                        # アプリケーションエントリポイント
-│   └── server/
-│       └── main.go            # DIコンテナ初期化、サーバー起動
+├── cmd/server/main.go          # エントリポイント、DI、サーバー起動
 │
-├── internal/                   # 内部パッケージ
-│   │
-│   ├── domain/                # Domain層（ビジネスロジック）
-│   │   ├── entity/           # エンティティ
-│   │   │   ├── node.go
-│   │   │   ├── edge.go
-│   │   │   ├── building.go
-│   │   │   └── room.go
-│   │   ├── value/            # 値オブジェクト
-│   │   │   ├── coordinate.go # 座標（緯度経度）
-│   │   │   ├── node_type.go  # ノードタイプ
-│   │   │   └── route.go      # 経路結果
-│   │   ├── repository/       # リポジトリインターフェース
-│   │   │   ├── node.go
-│   │   │   ├── edge.go
-│   │   │   └── building.go
-│   │   └── service/          # ドメインサービス
-│   │       └── routing.go    # 経路探索ロジック
-│   │
-│   ├── application/           # Application層（ユースケース）
-│   │   ├── route_search.go   # 経路探索ユースケース
-│   │   ├── building_info.go  # 建物情報取得ユースケース
-│   │   └── room_info.go      # 部屋情報取得ユースケース
-│   │
-│   ├── infrastructure/        # Infrastructure層（技術詳細）
-│   │   ├── postgres/         # PostgreSQL実装
-│   │   │   ├── connection.go # DB接続管理
-│   │   │   ├── node_repo.go  # ノードリポジトリ実装
-│   │   │   ├── edge_repo.go  # エッジリポジトリ実装
-│   │   │   └── routing.go    # pgRouting呼び出し
-│   │   ├── loader/           # データローダー
-│   │   │   └── csv.go        # CSV読み込み・DB投入
-│   │   └── config/           # 設定管理
-│   │       └── config.go
-│   │
-│   └── interfaces/            # Interfaces層（外部との境界）
-│       ├── handler/          # HTTPハンドラー
-│       │   ├── route.go
-│       │   ├── building.go
-│       │   └── room.go
-│       ├── dto/              # Data Transfer Object
-│       │   ├── request/
-│       │   └── response/
-│       ├── middleware/       # ミドルウェア
-│       │   └── error.go
-│       └── router/           # ルーティング設定
-│           └── router.go
+├── domain/                      # Domain層
+│   ├── model/                  # エンティティ・値オブジェクト
+│   ├── repository/             # リポジトリインターフェース
+│   └── service/                # ドメインサービス（経路探索ロジック）
 │
-├── pkg/                        # 外部公開可能なパッケージ
-│   └── errors/               # カスタムエラー
+├── usecase/                     # Usecase層（アプリケーションサービス）
 │
-├── db/                         # DBマイグレーション・シード
-│   ├── migrations/
-│   └── seeds/                # CSVシードデータ
+├── handler/                     # Handler層（Ginハンドラー、ルーター、ミドルウェア）
 │
-├── docs/                       # ドキュメント
-├── docker/                     # Docker関連ファイル
-├── temp/                       # 一時ファイル（コミット対象外）
+├── infra/                       # Infra層（技術詳細）
+│   ├── postgres/               # リポジトリ実装（pgx/pgRouting）
+│   └── loader/                 # CSVデータローダー
+│
+├── config/                      # 設定管理
+│
+├── db/                          # マイグレーション・シードCSV
+├── docs/                        # ドキュメント
+├── docker-compose.yml
 ├── go.mod
-├── go.sum
-└── docker-compose.yml
+└── go.sum
 ```
 
 ### 各レイヤーの責務
 
-| レイヤー       | 責務                                           | 依存先              |
-| -------------- | ---------------------------------------------- | ------------------- |
-| Domain         | エンティティ、ビジネスルール、リポジトリIF定義 | なし                |
-| Application    | ユースケース実行、トランザクション管理         | Domain              |
-| Infrastructure | DB接続、リポジトリ実装、CSV読み込み            | Domain              |
-| Interfaces     | HTTP処理、リクエスト/レスポンス変換            | Application, Domain |
+| レイヤー | 責務                                                 | 依存先 |
+| -------- | ---------------------------------------------------- | ------ |
+| Domain   | エンティティ定義、リポジトリIF、ドメインサービス     | なし   |
+| Infra    | リポジトリ実装、DB接続、CSV読み込み                | Domain |
+| Usecase  | ユースケース実行、トランザクション管理               | Domain |
+| Handler  | HTTP処理、リクエスト/レスポンス変換、ルーティング    | Usecase |
 
 ## 開発コマンド
 
