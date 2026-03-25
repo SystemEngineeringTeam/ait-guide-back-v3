@@ -13,6 +13,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+const (
+	errInsufficientColumns = "line %d: insufficient columns"
+	errLineWrap            = "line %d: %w"
+)
+
 // CSVSeeder はCSVファイルからDBにデータを投入する。
 type CSVSeeder struct {
 	pool *pgxpool.Pool
@@ -62,7 +67,7 @@ func (s *CSVSeeder) SeedBuildings(ctx context.Context, path string) error {
 
 	for i, r := range records {
 		if len(r) < 2 {
-			return fmt.Errorf("line %d: insufficient columns", i+2)
+			return fmt.Errorf(errInsufficientColumns, i+2)
 		}
 		id, err := strconv.Atoi(r[0])
 		if err != nil {
@@ -76,7 +81,7 @@ func (s *CSVSeeder) SeedBuildings(ctx context.Context, path string) error {
 			`INSERT INTO buildings (id, name, description, affiliation) VALUES ($1, $2, $3, $4) ON CONFLICT (id) DO NOTHING`,
 			id, name, description, affiliation)
 		if err != nil {
-			return fmt.Errorf("line %d: %w", i+2, err)
+			return fmt.Errorf(errLineWrap, i+2, err)
 		}
 	}
 	return nil
@@ -92,7 +97,7 @@ func (s *CSVSeeder) SeedNodes(ctx context.Context, path string) error {
 
 	for i, r := range records {
 		if len(r) < 4 {
-			return fmt.Errorf("line %d: insufficient columns", i+2)
+			return fmt.Errorf(errInsufficientColumns, i+2)
 		}
 		nodeID := r[0]
 		lat, err := strconv.ParseFloat(r[1], 64)
@@ -111,7 +116,7 @@ func (s *CSVSeeder) SeedNodes(ctx context.Context, path string) error {
 			`INSERT INTO nodes (node_id, geom, node_type, building_id, floor) VALUES ($1, ST_SetSRID(ST_MakePoint($2, $3), 4326), $4, $5, $6) ON CONFLICT (node_id) DO NOTHING`,
 			nodeID, lng, lat, nodeType, buildingID, floor)
 		if err != nil {
-			return fmt.Errorf("line %d: %w", i+2, err)
+			return fmt.Errorf(errLineWrap, i+2, err)
 		}
 	}
 	return nil
@@ -127,7 +132,7 @@ func (s *CSVSeeder) SeedEdges(ctx context.Context, path string) error {
 
 	for i, r := range records {
 		if len(r) < 8 {
-			return fmt.Errorf("line %d: insufficient columns", i+2)
+			return fmt.Errorf(errInsufficientColumns, i+2)
 		}
 		nodeFrom := r[0]
 		nodeTarget := r[1]
@@ -148,7 +153,7 @@ func (s *CSVSeeder) SeedEdges(ctx context.Context, path string) error {
 			`INSERT INTO edges (node_id_from, node_id_target, distance, cost, level, has_stairs, is_accessible, is_indoor) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
 			nodeFrom, nodeTarget, distance, cost, level, hasStairs, isAccessible, isIndoor)
 		if err != nil {
-			return fmt.Errorf("line %d: %w", i+2, err)
+			return fmt.Errorf(errLineWrap, i+2, err)
 		}
 	}
 	return nil
@@ -164,7 +169,7 @@ func (s *CSVSeeder) SeedRooms(ctx context.Context, path string) error {
 
 	for i, r := range records {
 		if len(r) < 2 {
-			return fmt.Errorf("line %d: insufficient columns", i+2)
+			return fmt.Errorf(errInsufficientColumns, i+2)
 		}
 		roomID := r[0]
 		buildingID, err := strconv.Atoi(r[1])
@@ -182,7 +187,7 @@ func (s *CSVSeeder) SeedRooms(ctx context.Context, path string) error {
 			`INSERT INTO rooms (room_id, building_id, node_id, name, description, floor, capacity, room_type) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT (room_id) DO NOTHING`,
 			roomID, buildingID, nodeID, name, description, floor, capacity, roomType)
 		if err != nil {
-			return fmt.Errorf("line %d: %w", i+2, err)
+			return fmt.Errorf(errLineWrap, i+2, err)
 		}
 	}
 	return nil
@@ -198,7 +203,7 @@ func (s *CSVSeeder) SeedPhotos(ctx context.Context, path string) error {
 
 	for i, r := range records {
 		if len(r) < 4 {
-			return fmt.Errorf("line %d: insufficient columns", i+2)
+			return fmt.Errorf(errInsufficientColumns, i+2)
 		}
 		buildingID, err := strconv.Atoi(r[0])
 		if err != nil {
@@ -215,7 +220,7 @@ func (s *CSVSeeder) SeedPhotos(ctx context.Context, path string) error {
 			`INSERT INTO photos (building_id, url, caption, display_order) VALUES ($1, $2, $3, $4)`,
 			buildingID, url, caption, displayOrder)
 		if err != nil {
-			return fmt.Errorf("line %d: %w", i+2, err)
+			return fmt.Errorf(errLineWrap, i+2, err)
 		}
 	}
 	return nil
