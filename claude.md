@@ -55,9 +55,9 @@
 
 ### 依存関係のルール
 
-- Handler → Usecase → Domain の一方向依存
+- Handler → Usecase → Domainの一方向依存
 - Domain層は他のレイヤーに依存しない
-- Infra層はDomain層のインターフェースを実装（依存性逆転）
+- Infra層はDomain層のインターフェイスを実装（依存性逆転）
 
 ## ディレクトリ構成
 
@@ -146,7 +146,7 @@ go run cmd/migrate/main.go up
 - パッケージ名: 小文字、単一単語
 - 変数名: キャメルケース（`nodeID`, `buildingName`）
 - エクスポート: 大文字始まり
-- 定数: キャメルケースまたは ALL_CAPS
+- 定数: キャメルケースまたはALL_CAPS
 
 ### エラーハンドリング
 
