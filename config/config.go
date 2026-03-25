@@ -11,6 +11,7 @@ type Config struct {
 	Server   ServerConfig
 	Database DatabaseConfig
 	SeedDir  string
+	LogFile  string
 }
 
 type ServerConfig struct {
@@ -43,6 +44,7 @@ func Load() *Config {
 			DBName:   getEnv("DB_NAME", "aitguide"),
 		},
 		SeedDir: getEnv("SEED_DIR", "db/seeds"),
+		LogFile: getEnv("LOG_FILE", "logs/server.log"),
 	}
 }
 

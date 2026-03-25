@@ -4,10 +4,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 	"time"
 
@@ -16,10 +18,36 @@ import (
 	"github.com/SystemEngineeringTeam/ait-guide-back-v3/infra/loader"
 	"github.com/SystemEngineeringTeam/ait-guide-back-v3/infra/postgres"
 	"github.com/SystemEngineeringTeam/ait-guide-back-v3/usecase"
+	"github.com/gin-gonic/gin"
 )
+
+func setupLogger(logFile string) (*os.File, error) {
+	if err := os.MkdirAll(filepath.Dir(logFile), 0o755); err != nil {
+		return nil, fmt.Errorf("failed to create log directory: %w", err)
+	}
+
+	f, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open log file: %w", err)
+	}
+
+	multiWriter := io.MultiWriter(os.Stdout, f)
+	log.SetOutput(multiWriter)
+	gin.DefaultWriter = multiWriter
+	gin.DefaultErrorWriter = multiWriter
+
+	return f, nil
+}
 
 func main() {
 	cfg := config.Load()
+
+	// ログ設定
+	logFile, err := setupLogger(cfg.LogFile)
+	if err != nil {
+		log.Fatalf("failed to setup logger: %v", err)
+	}
+	defer logFile.Close()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
