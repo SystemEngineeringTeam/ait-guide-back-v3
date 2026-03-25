@@ -1,14 +1,13 @@
 services:
   db:
-    image: pgrouting/pgrouting:16-3.6-3.4
+    image: pgrouting/pgrouting:16-3.5-main
+    env_file: .env
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
       - "${DB_PORT}:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 5s
@@ -16,20 +15,17 @@ services:
       retries: 5
 
   app:
-    build: .
+    build:
+      context: .
+      target: dev
+    env_file: .env
+    volumes:
+      - .:/app
     ports:
       - "${SERVER_PORT}:${SERVER_PORT}"
     environment:
+      TZ: Asia/Tokyo
       DB_HOST: db
-      DB_PORT: ${DB_PORT}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
-      SERVER_PORT: ${SERVER_PORT}
-      SEED_DIR: ${SEED_DIR}
     depends_on:
       db:
         condition: service_healthy
-
-volumes:
-  pgdata:

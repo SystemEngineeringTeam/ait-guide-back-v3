@@ -1,0 +1,33 @@
+# Version control
+.git
+.gitignore
+
+# Build artifacts
+bin/
+tmp/
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Docker
+Dockerfile
+.dockerignore
+compose.yaml
+
+# Environment / config
+.env
+.air.toml
+
+# Documentation
+docs/
+*.md
+
+# IDE / editor
+.vscode/
+.idea/
+
+# Misc
+temp/
