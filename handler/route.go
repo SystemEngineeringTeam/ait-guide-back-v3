@@ -27,6 +27,23 @@ func NewRouteHandler(uc *usecase.RouteUsecase) *RouteHandler {
 }
 
 // Search は経路探索（新バージョン）のハンドラー。
+//
+//	@Summary		経路探索
+//	@Description	複数の重みパラメータとフィルタリングオプションを使用した経路探索
+//	@Tags			routes
+//	@Produce		json
+//	@Param			building_id	path		int				true	"目的地の建物ID"
+//	@Param			lat			query		number			false	"現在地の緯度"		default(35.181531)
+//	@Param			lng			query		number			false	"現在地の経度"		default(137.109509)
+//	@Param			level		query		int				false	"使用する道の主要度（1〜5）"	default(3)
+//	@Param			stairs		query		boolean			false	"階段を含む経路を許可するか"	default(true)
+//	@Param			accessible	query		boolean			false	"バリアフリー経路を使用するか"	default(false)
+//	@Param			indoor		query		boolean			false	"屋内優先か"		default(false)
+//	@Success		200			{object}	map[string]any	"経路情報"
+//	@Failure		400			{object}	map[string]any	"パラメータ不正"
+//	@Failure		404			{object}	map[string]any	"ノード/建物/経路が見つからない"
+//	@Failure		500			{object}	map[string]any	"サーバーエラー"
+//	@Router			/routes/search/{building_id} [get]
 func (h *RouteHandler) Search(c *gin.Context) {
 	buildingID, err := strconv.Atoi(c.Param("building_id"))
 	if err != nil {
@@ -68,6 +85,18 @@ func (h *RouteHandler) Search(c *gin.Context) {
 }
 
 // Legacy は経路探索（旧バージョン）のハンドラー。
+//
+//	@Summary		経路探索（レガシー）
+//	@Description	旧バージョンとの互換性のためのエンドポイント。距離のみを重みとして使用。
+//	@Tags			routes
+//	@Produce		json
+//	@Param			lat	query		number			false	"現在地の緯度"		default(35.181531)
+//	@Param			lng	query		number			false	"現在地の経度"		default(137.109509)
+//	@Param			end	query		string			false	"目的地のノードID"	default(1)
+//	@Success		200	{object}	map[string]any	"経路情報"
+//	@Failure		404	{object}	map[string]any	"ノード/経路が見つからない"
+//	@Failure		500	{object}	map[string]any	"サーバーエラー"
+//	@Router			/get/route [get]
 func (h *RouteHandler) Legacy(c *gin.Context) {
 	lat := parseFloat(c.Query("lat"), defaultLat)
 	lng := parseFloat(c.Query("lng"), defaultLng)

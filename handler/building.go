@@ -20,6 +20,17 @@ func NewBuildingHandler(uc *usecase.BuildingUsecase) *BuildingHandler {
 	return &BuildingHandler{uc: uc}
 }
 
+// List は建物一覧を取得する。
+//
+//	@Summary		建物一覧取得
+//	@Description	建物の一覧を返す。所属でフィルタリング可能。
+//	@Tags			buildings
+//	@Produce		json
+//	@Param			limit		query		int		false	"返却する建物の最大数"	default(100)
+//	@Param			affiliation	query		string	false	"所属でフィルタリング"
+//	@Success		200			{object}	map[string]any	"建物一覧"
+//	@Failure		500			{object}	map[string]any	"サーバーエラー"
+//	@Router			/buildings [get]
 func (h *BuildingHandler) List(c *gin.Context) {
 	limit := 100
 	if v := c.Query("limit"); v != "" {
@@ -51,6 +62,18 @@ func (h *BuildingHandler) List(c *gin.Context) {
 	respondSuccess(c, result)
 }
 
+// GetByID は建物情報を取得する。
+//
+//	@Summary		建物情報取得
+//	@Description	指定した建物IDの詳細情報（写真含む）を返す
+//	@Tags			buildings
+//	@Produce		json
+//	@Param			building_id	path		int				true	"建物ID"
+//	@Success		200			{object}	map[string]any	"建物詳細"
+//	@Failure		400			{object}	map[string]any	"パラメータ不正"
+//	@Failure		404			{object}	map[string]any	"建物が見つからない"
+//	@Failure		500			{object}	map[string]any	"サーバーエラー"
+//	@Router			/buildings/{building_id} [get]
 func (h *BuildingHandler) GetByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("building_id"))
 	if err != nil {

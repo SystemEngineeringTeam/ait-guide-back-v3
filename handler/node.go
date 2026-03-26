@@ -20,6 +20,20 @@ func NewNodeHandler(uc *usecase.NodeUsecase) *NodeHandler {
 	return &NodeHandler{uc: uc}
 }
 
+// List はノード一覧を取得する。
+//
+//	@Summary		ノード一覧取得
+//	@Description	ノードの一覧を返す。ノードID・タイプ・建物ID・階数でフィルタリング可能。
+//	@Tags			nodes
+//	@Produce		json
+//	@Param			node_id		query		string			false	"ノードIDでフィルタリング"
+//	@Param			node_type	query		string			false	"ノードタイプでフィルタリング（entrance, road, door）"
+//	@Param			building_id	query		int				false	"建物IDでフィルタリング"
+//	@Param			floor		query		int				false	"階数でフィルタリング"
+//	@Param			limit		query		int				false	"返却するノードの最大数"	default(100)
+//	@Success		200			{object}	map[string]any	"ノード一覧"
+//	@Failure		500			{object}	map[string]any	"サーバーエラー"
+//	@Router			/nodes [get]
 func (h *NodeHandler) List(c *gin.Context) {
 	var filter repository.NodeFilter
 	filter.Limit = 100

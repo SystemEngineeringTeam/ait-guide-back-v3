@@ -1,4 +1,10 @@
 // Package main はサーバーのエントリポイントを提供する。
+//
+//	@title			AIT Guide API
+//	@version		3.0
+//	@description	建物内外の経路情報を管理し、複数の重みパラメータを考慮した最適経路を提供するWebAPI
+//	@host			localhost:8080
+//	@BasePath		/api
 package main
 
 import (
@@ -12,6 +18,8 @@ import (
 	"path/filepath"
 	"syscall"
 	"time"
+
+	_ "github.com/SystemEngineeringTeam/ait-guide-back-v3/docs/swagger"
 
 	"github.com/SystemEngineeringTeam/ait-guide-back-v3/config"
 	"github.com/SystemEngineeringTeam/ait-guide-back-v3/handler"

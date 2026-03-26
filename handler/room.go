@@ -21,6 +21,18 @@ func NewRoomHandler(uc *usecase.RoomUsecase) *RoomHandler {
 	return &RoomHandler{uc: uc}
 }
 
+// List は部屋一覧を取得する。
+//
+//	@Summary		部屋一覧取得
+//	@Description	部屋の一覧を返す。建物ID・階数・部屋タイプでフィルタリング可能。
+//	@Tags			rooms
+//	@Produce		json
+//	@Param			building_id	query		int				false	"建物IDでフィルタリング"
+//	@Param			floor		query		int				false	"階数でフィルタリング"
+//	@Param			room_type	query		string			false	"部屋タイプでフィルタリング（classroom, office, lab, lecture_hall）"
+//	@Success		200			{object}	map[string]any	"部屋一覧"
+//	@Failure		500			{object}	map[string]any	"サーバーエラー"
+//	@Router			/rooms [get]
 func (h *RoomHandler) List(c *gin.Context) {
 	var filter repository.RoomFilter
 
@@ -67,6 +79,17 @@ func (h *RoomHandler) List(c *gin.Context) {
 	respondSuccess(c, result)
 }
 
+// GetByRoomID は部屋情報を取得する。
+//
+//	@Summary		部屋情報取得
+//	@Description	指定した部屋IDの詳細情報を返す
+//	@Tags			rooms
+//	@Produce		json
+//	@Param			room_id	path		string			true	"部屋ID"
+//	@Success		200		{object}	map[string]any	"部屋詳細"
+//	@Failure		404		{object}	map[string]any	"部屋が見つからない"
+//	@Failure		500		{object}	map[string]any	"サーバーエラー"
+//	@Router			/rooms/{room_id} [get]
 func (h *RoomHandler) GetByRoomID(c *gin.Context) {
 	roomID := c.Param("room_id")
 
