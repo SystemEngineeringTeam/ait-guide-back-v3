@@ -39,8 +39,9 @@ func (u *RouteUsecase) SearchRoute(ctx context.Context, lat, lng float64, buildi
 		return nil, service.ErrBuildingNotFound
 	}
 
-	// 経路探索
-	route, err := u.routeRepo.FindRoute(ctx, sourceNode.ID, targetNode.ID, option)
+	// コスト重みを算出して経路探索
+	weight := service.CostWeightFromOption(option)
+	route, err := u.routeRepo.FindRoute(ctx, sourceNode.ID, targetNode.ID, option, weight)
 	if err != nil {
 		return nil, err
 	}
@@ -74,10 +75,11 @@ func (u *RouteUsecase) SearchRouteLegacy(ctx context.Context, lat, lng float64, 
 
 	// デフォルトオプションで経路探索
 	option := model.RouteOption{
-		Level:  5,
+		Level:  3,
 		Stairs: true,
 	}
-	route, err := u.routeRepo.FindRoute(ctx, sourceNode.ID, nodes[0].ID, option)
+	weight := service.CostWeightFromOption(option)
+	route, err := u.routeRepo.FindRoute(ctx, sourceNode.ID, nodes[0].ID, option, weight)
 	if err != nil {
 		return nil, err
 	}

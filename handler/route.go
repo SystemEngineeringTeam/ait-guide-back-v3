@@ -35,7 +35,7 @@ func NewRouteHandler(uc *usecase.RouteUsecase) *RouteHandler {
 //	@Param			building_id	path		int				true	"目的地の建物ID"
 //	@Param			lat			query		number			false	"現在地の緯度"		default(35.181531)
 //	@Param			lng			query		number			false	"現在地の経度"		default(137.109509)
-//	@Param			level		query		int				false	"使用する道の主要度（1〜5）"	default(3)
+//	@Param			level		query		int				false	"道の優先度（0:距離のみ, 1:大通り優先〜5:脇道優先）"	default(3)
 //	@Param			stairs		query		boolean			false	"階段を含む経路を許可するか"	default(true)
 //	@Param			accessible	query		boolean			false	"バリアフリー経路を使用するか"	default(false)
 //	@Param			indoor		query		boolean			false	"屋内優先か"		default(false)
