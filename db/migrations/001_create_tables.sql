@@ -33,7 +33,6 @@ CREATE TABLE IF NOT EXISTS edges (
     node_id_from   VARCHAR(50) NOT NULL,
     node_id_target VARCHAR(50) NOT NULL,
     distance       FLOAT NOT NULL,
-    cost           FLOAT,
     level          INTEGER NOT NULL,
     has_stairs     BOOLEAN NOT NULL,
     is_accessible  BOOLEAN NOT NULL,
@@ -41,8 +40,7 @@ CREATE TABLE IF NOT EXISTS edges (
     CONSTRAINT chk_edge_from_format CHECK (node_id_from ~ '^[a-z0-9_]+$'),
     CONSTRAINT chk_edge_target_format CHECK (node_id_target ~ '^[a-z0-9_]+$'),
     CONSTRAINT chk_edge_no_self_ref CHECK (node_id_from != node_id_target),
-    CONSTRAINT chk_distance_positive CHECK (distance >= 0),
-    CONSTRAINT chk_cost_positive CHECK (cost IS NULL OR cost >= 0)
+    CONSTRAINT chk_distance_positive CHECK (distance >= 0)
 );
 
 CREATE INDEX IF NOT EXISTS idx_edges_from ON edges (node_id_from);
@@ -91,7 +89,6 @@ SELECT
     n1.id AS source,
     n2.id AS target,
     e.distance,
-    COALESCE(e.cost, 0) AS cost,
     e.level,
     e.has_stairs,
     e.is_accessible,

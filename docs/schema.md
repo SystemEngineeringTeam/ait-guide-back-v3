@@ -14,7 +14,7 @@
 | ----------- | ---------- | --------------------------------------------------------------------------------------------- |
 | `buildings` | 建物情報   | id, name, description                                                                         |
 | `nodes`     | 経路ノード | id, node_id, geom(Point), node_type, building_id, floor                                       |
-| `edges`     | 経路エッジ | id, node_id_from, node_id_target, distance, cost, level, has_stairs, is_accessible, is_indoor |
+| `edges`     | 経路エッジ | id, node_id_from, node_id_target, distance, level, has_stairs, is_accessible, is_indoor |
 | `rooms`     | 部屋情報   | id, room_id, building_id, node_id, name, description                                          |
 | `photos`    | 建物写真   | id, building_id, url, caption, display_order                                                  |
 
@@ -74,7 +74,7 @@
 
 **備考:**
 
-- 屋外ノード: `building_id` と `floor` は NULL
+- 屋外ノード: `building_id` と `floor` はNULL
 - 屋内ノード: `building_id` が設定され、`floor` で階数を管理
 
 ---
@@ -87,8 +87,7 @@
 | node_id_from   | VARCHAR(50) | NOT NULL | 開始ノードID                    |
 | node_id_target | VARCHAR(50) | NOT NULL | 終了ノードID                    |
 | distance       | FLOAT       | NOT NULL | 距離（メートル）                |
-| cost           | FLOAT       | NULL     | コスト（任意単位）              |
-| level          | INTEGER     | NOT NULL | 経路の主要度 1(大通り)〜5(脇道) |
+| level          | INTEGER     | NOT NULL | 経路の主要度 1(大通り)〜5(脇道)  |
 | has_stairs     | BOOLEAN     | NOT NULL | 階段を含むか                    |
 | is_accessible  | BOOLEAN     | NOT NULL | バリアフリーか                  |
 | is_indoor      | BOOLEAN     | NOT NULL | 屋内経路か                      |
@@ -100,7 +99,6 @@
 - CHECK (node*id_target ~ '^[a-z0-9*]+$')
 - CHECK (node_id_from != node_id_target)
 - CHECK (distance >= 0)
-- CHECK (cost IS NULL OR cost >= 0)
 
 **インデックス:**
 
@@ -185,9 +183,9 @@
 
 **カラム:**
 
-- id, source, target, distance, cost, has_stairs, is_accessible, is_indoor
-- node_id_from, node_id_target (デバッグ用)
-- building_id_from, building_id_target (屋内経路の建物判定用)
+- id, source, target, distance, has_stairs, is_accessible, is_indoor
+- node_id_from, node_id_target（デバッグ用）
+- building_id_from, building_id_target（屋内経路の建物判定用）
 
 **ビュー定義:**
 
@@ -198,7 +196,6 @@ SELECT
     n1.id as source,
     n2.id as target,
     e.distance,
-    COALESCE(e.cost, 0) as cost,
     e.has_stairs,
     e.is_accessible,
     e.is_indoor,
@@ -268,8 +265,8 @@ FK制約を使用しない代わりに、PL/pgSQL関数でデータ整合性を�
 
 1. エッジが参照するノード（from/target）が存在するか
 2. 部屋が参照する建物・ドアノードが存在するか
-3. 屋内ノードの building_id が存在するか
-4. 屋内エッジの両端ノードが同じ building_id に属するか
+3. 屋内ノードのbuilding_idが存在するか
+4. 屋内エッジの両端ノードが同じbuilding_idに属するか
 
 ---
 

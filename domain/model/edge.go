@@ -6,7 +6,6 @@ type Edge struct {
 	NodeIDFrom   string
 	NodeIDTarget string
 	Distance     float64
-	Cost         *float64
 	Level        int
 	HasStairs    bool
 	IsAccessible bool

@@ -123,7 +123,7 @@ func (s *CSVSeeder) SeedNodes(ctx context.Context, path string) error {
 }
 
 // SeedEdges はedges.csvを投入する。
-// CSV形式: node_id_from,node_id_target,distance,cost,level,has_stairs,is_accessible,is_indoor
+// CSV形式: node_id_from,node_id_target,distance,level,has_stairs,is_accessible,is_indoor
 func (s *CSVSeeder) SeedEdges(ctx context.Context, path string) error {
 	records, err := readCSV(path)
 	if err != nil {
@@ -131,7 +131,7 @@ func (s *CSVSeeder) SeedEdges(ctx context.Context, path string) error {
 	}
 
 	for i, r := range records {
-		if len(r) < 8 {
+		if len(r) < 7 {
 			return fmt.Errorf(errInsufficientColumns, i+2)
 		}
 		nodeFrom := r[0]
@@ -140,18 +140,17 @@ func (s *CSVSeeder) SeedEdges(ctx context.Context, path string) error {
 		if err != nil {
 			return fmt.Errorf("line %d: invalid distance: %w", i+2, err)
 		}
-		cost := nullableFloat(r, 3)
-		level, err := strconv.Atoi(r[4])
+		level, err := strconv.Atoi(r[3])
 		if err != nil {
 			return fmt.Errorf("line %d: invalid level: %w", i+2, err)
 		}
-		hasStairs := parseBool(r[5])
-		isAccessible := parseBool(r[6])
-		isIndoor := parseBool(r[7])
+		hasStairs := parseBool(r[4])
+		isAccessible := parseBool(r[5])
+		isIndoor := parseBool(r[6])
 
 		_, err = s.pool.Exec(ctx,
-			`INSERT INTO edges (node_id_from, node_id_target, distance, cost, level, has_stairs, is_accessible, is_indoor) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-			nodeFrom, nodeTarget, distance, cost, level, hasStairs, isAccessible, isIndoor)
+			`INSERT INTO edges (node_id_from, node_id_target, distance, level, has_stairs, is_accessible, is_indoor) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+			nodeFrom, nodeTarget, distance, level, hasStairs, isAccessible, isIndoor)
 		if err != nil {
 			return fmt.Errorf(errLineWrap, i+2, err)
 		}
@@ -268,16 +267,6 @@ func nullableInt(r []string, idx int) *int {
 	return &v
 }
 
-func nullableFloat(r []string, idx int) *float64 {
-	if idx >= len(r) || strings.TrimSpace(r[idx]) == "" {
-		return nil
-	}
-	v, err := strconv.ParseFloat(strings.TrimSpace(r[idx]), 64)
-	if err != nil {
-		return nil
-	}
-	return &v
-}
 
 func parseBool(s string) bool {
 	s = strings.TrimSpace(strings.ToLower(s))
