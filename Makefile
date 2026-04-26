@@ -1,6 +1,6 @@
 .PHONY: help dev dev-build prod prod-build down down-v \
        logs logs-db \
-       run build test test-cover fmt vet lint \
+       run build test test-cover fmt vet lint swag \
        db-up db-psql
 
 help: ## Show this help
@@ -63,3 +63,8 @@ vet: ## Run go vet
 
 lint: ## Run golangci-lint
 	golangci-lint run
+
+swag: ## Regenerate Swagger docs
+# 	go run github.com/swaggo/swag/cmd/swag init -g cmd/server/main.go -o docs/swagger
+# 	swag init -g main.go -d cmd/server config domain handler infra usecase -o docs/swagger
+	go run github.com/swaggo/swag/cmd/swag@v1.16.6 init -g main.go -d cmd/server,handler -o docs/swagger

@@ -378,7 +378,7 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "default": 3,
-                        "description": "使用する道の主要度（1〜5）",
+                        "description": "道の優先度（0:距離のみ, 1:大通り優先〜5:脇道優先）",
                         "name": "level",
                         "in": "query"
                     },
