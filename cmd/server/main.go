@@ -55,7 +55,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to setup logger: %v", err)
 	}
-	defer logFile.Close()
+	defer func() {
+		if cerr := logFile.Close(); cerr != nil {
+			log.Printf("failed to close log file: %v", cerr)
+		}
+	}()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
