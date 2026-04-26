@@ -13,19 +13,3 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
-  app:
-    build:
-      context: .
-      target: dev
-    env_file: .env
-    volumes:
-      - .:/app
-    ports:
-      - "${SERVER_PORT}:${SERVER_PORT}"
-    environment:
-      TZ: Asia/Tokyo
-      DB_HOST: db
-    depends_on:
-      db:
-        condition: service_healthy
