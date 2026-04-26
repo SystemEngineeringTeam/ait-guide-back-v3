@@ -11,7 +11,7 @@ type RoutePoint struct {
 type Route struct {
 	Points        []RoutePoint
 	TotalDistance float64
-	TotalCost    float64
+	TotalCost     float64
 }
 
 // RouteOption は経路探索のフィルタリングオプション。

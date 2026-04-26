@@ -267,7 +267,6 @@ func nullableInt(r []string, idx int) *int {
 	return &v
 }
 
-
 func parseBool(s string) bool {
 	s = strings.TrimSpace(strings.ToLower(s))
 	return s == "true" || s == "1" || s == "yes"
