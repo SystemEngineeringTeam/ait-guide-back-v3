@@ -56,8 +56,8 @@ func (r *RouteRepository) FindRoute(ctx context.Context, sourceNodeID, targetNod
 				r.agg_cost,
 				COALESCE(efr.distance, 0) AS edge_distance
 		FROM pgr_dijkstra(
-			'%s',
-			$1, $2, false
+			'%s'::text,
+			$1::bigint, $2::bigint, false
 		) AS r
 		JOIN nodes n ON r.node = n.id
 		LEFT JOIN edges_for_routing efr ON r.edge = efr.id
