@@ -92,7 +92,7 @@ func (h *RouteHandler) Search(c *gin.Context) {
 //	@Produce		json
 //	@Param			lat	query		number			false	"現在地の緯度"		default(35.181531)
 //	@Param			lng	query		number			false	"現在地の経度"		default(137.109509)
-//	@Param			end	query		string			false	"目的地のノードID"	default(1)
+//	@Param			end	query		int				false	"目的地のノードID（nodes.id）"	default(1)
 //	@Success		200	{object}	map[string]any	"経路情報"
 //	@Failure		404	{object}	map[string]any	"ノード/経路が見つからない"
 //	@Failure		500	{object}	map[string]any	"サーバーエラー"
@@ -100,9 +100,9 @@ func (h *RouteHandler) Search(c *gin.Context) {
 func (h *RouteHandler) Legacy(c *gin.Context) {
 	lat := parseFloat(c.Query("lat"), defaultLat)
 	lng := parseFloat(c.Query("lng"), defaultLng)
-	endNodeID := c.DefaultQuery("end", "1")
+	endID := parseInt(c.Query("end"), 1)
 
-	route, err := h.uc.SearchRouteLegacy(c.Request.Context(), lat, lng, endNodeID)
+	route, err := h.uc.SearchRouteLegacy(c.Request.Context(), lat, lng, endID)
 	if err != nil {
 		handleRouteError(c, err)
 		return

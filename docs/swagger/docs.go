@@ -135,9 +135,9 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "default": "1",
-                        "description": "目的地のノードID",
+                        "type": "integer",
+                        "default": 1,
+                        "description": "目的地のノードID（nodes.id）",
                         "name": "end",
                         "in": "query"
                     }

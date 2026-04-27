@@ -84,11 +84,11 @@ paths:
         in: query
         name: lng
         type: number
-      - default: "1"
-        description: 目的地のノードID
+      - default: 1
+        description: 目的地のノードID（nodes.id）
         in: query
         name: end
-        type: string
+        type: integer
       produces:
       - application/json
       responses:
