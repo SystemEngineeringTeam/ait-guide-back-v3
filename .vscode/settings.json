@@ -24,5 +24,8 @@
     "MD013": false,
     "MD033": false,
     "MD041": false
+  },
+  "evenBetterToml.schema.associations": {
+    "\\.air\\.toml$": "https://json.schemastore.org/air.json"
   }
 }

@@ -33,3 +33,5 @@ logs/
 
 # Seed files
 db/seeds/
+
+local/*
