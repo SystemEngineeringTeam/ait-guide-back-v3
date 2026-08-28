@@ -65,20 +65,21 @@
 .
 ├── cmd/server/main.go          # エントリポイント、DI、サーバー起動
 │
-├── domain/                      # Domain層
-│   ├── model/                  # エンティティ・値オブジェクト
-│   ├── repository/             # リポジトリインターフェース
-│   └── service/                # ドメインサービス（経路探索ロジック）
-│
-├── usecase/                     # Usecase層（アプリケーションサービス）
-│
-├── handler/                     # Handler層（Ginハンドラー、ルーター、ミドルウェア）
-│
-├── infra/                       # Infra層（技術詳細）
-│   ├── postgres/               # リポジトリ実装（pgx/pgRouting）
-│   └── loader/                 # CSVデータローダー
-│
-├── config/                      # 設定管理
+├── internal/                    # 外部公開しないアプリケーションコード
+│   ├── domain/                  # Domain層
+│   │   ├── model/               # エンティティ・値オブジェクト
+│   │   ├── repository/          # リポジトリインターフェース
+│   │   └── service/             # ドメインサービス（経路探索ロジック）
+│   │
+│   ├── usecase/                 # Usecase層（アプリケーションサービス）
+│   │
+│   ├── handler/                 # Handler層（Ginハンドラー、ルーター、ミドルウェア）
+│   │
+│   ├── infra/                   # Infra層（技術詳細）
+│   │   ├── postgres/            # リポジトリ実装（pgx/pgRouting）
+│   │   └── loader/              # CSVデータローダー
+│   │
+│   └── config/                  # 設定管理
 │
 ├── db/                          # マイグレーション・シードCSV
 ├── docs/                        # ドキュメント

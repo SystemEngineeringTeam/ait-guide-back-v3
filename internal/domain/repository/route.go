@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/SystemEngineeringTeam/ait-guide-back-v3/domain/model"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/domain/model"
 )
 
 // RouteRepository は経路探索を提供する。

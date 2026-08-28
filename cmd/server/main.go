@@ -21,11 +21,11 @@ import (
 
 	_ "github.com/SystemEngineeringTeam/ait-guide-back-v3/docs/swagger"
 
-	"github.com/SystemEngineeringTeam/ait-guide-back-v3/config"
-	"github.com/SystemEngineeringTeam/ait-guide-back-v3/handler"
-	"github.com/SystemEngineeringTeam/ait-guide-back-v3/infra/loader"
-	"github.com/SystemEngineeringTeam/ait-guide-back-v3/infra/postgres"
-	"github.com/SystemEngineeringTeam/ait-guide-back-v3/usecase"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/config"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/handler"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/infra/loader"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/infra/postgres"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/usecase"
 	"github.com/gin-gonic/gin"
 )
 

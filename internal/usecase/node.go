@@ -3,8 +3,8 @@ package usecase
 import (
 	"context"
 
-	"github.com/SystemEngineeringTeam/ait-guide-back-v3/domain/model"
-	"github.com/SystemEngineeringTeam/ait-guide-back-v3/domain/repository"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/domain/model"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/domain/repository"
 )
 
 // NodeUsecase はノードに関するユースケース。

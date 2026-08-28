@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/SystemEngineeringTeam/ait-guide-back-v3/domain/service"
-	"github.com/SystemEngineeringTeam/ait-guide-back-v3/usecase"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/domain/service"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/usecase"
 	"github.com/gin-gonic/gin"
 )
 

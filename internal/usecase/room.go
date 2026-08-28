@@ -3,9 +3,9 @@ package usecase
 import (
 	"context"
 
-	"github.com/SystemEngineeringTeam/ait-guide-back-v3/domain/model"
-	"github.com/SystemEngineeringTeam/ait-guide-back-v3/domain/repository"
-	"github.com/SystemEngineeringTeam/ait-guide-back-v3/domain/service"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/domain/model"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/domain/repository"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/domain/service"
 )
 
 // RoomUsecase は部屋に関するユースケース。

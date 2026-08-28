@@ -1,6 +1,6 @@
 package service
 
-import "github.com/SystemEngineeringTeam/ait-guide-back-v3/domain/model"
+import "github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/domain/model"
 
 // CostWeightFromOption は検索条件に応じたコスト重みを返す。
 func CostWeightFromOption(option model.RouteOption) model.CostWeight {

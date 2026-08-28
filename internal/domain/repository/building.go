@@ -4,7 +4,7 @@ package repository
 import (
 	"context"
 
-	"github.com/SystemEngineeringTeam/ait-guide-back-v3/domain/model"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/domain/model"
 )
 
 // BuildingRepository は建物データへのアクセスを提供する。

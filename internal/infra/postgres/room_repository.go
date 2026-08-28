@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/SystemEngineeringTeam/ait-guide-back-v3/domain/model"
-	"github.com/SystemEngineeringTeam/ait-guide-back-v3/domain/repository"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/domain/model"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/domain/repository"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )

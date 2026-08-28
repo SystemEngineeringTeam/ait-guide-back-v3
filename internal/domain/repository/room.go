@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/SystemEngineeringTeam/ait-guide-back-v3/domain/model"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/domain/model"
 )
 
 // RoomRepository は部屋データへのアクセスを提供する。
