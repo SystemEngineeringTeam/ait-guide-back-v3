@@ -50,7 +50,7 @@
 | geom        | GEOMETRY(Point, 4326) | NOT NULL | 地理座標（緯度経度）         |
 | node_type   | VARCHAR(50)           | NOT NULL | ノード種別                   |
 | building_id | INTEGER               | NULL     | 所属建物ID（屋内ノードのみ） |
-| floor       | INTEGER               | NULL     | 階数（屋内ノードのみ）       |
+| floor       | INTEGER               | NULL     | 階数（デフォルト1）          |
 
 **node_type の値:**
 
@@ -125,7 +125,7 @@
 | node_id     | VARCHAR(50)  | NULL     | ドアノードID (nodes.node_id) |
 | name        | VARCHAR(200) | NULL     | 部屋名                       |
 | description | TEXT         | NULL     | 部屋説明                     |
-| floor       | INTEGER      | NULL     | 階数                         |
+| floor       | INTEGER      | NULL     | 階数（デフォルト1）          |
 | capacity    | INTEGER      | NULL     | 収容人数                     |
 | room_type   | VARCHAR(50)  | NULL     | 部屋タイプ                   |
 

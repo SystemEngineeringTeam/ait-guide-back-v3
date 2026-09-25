@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS nodes (
     geom        GEOMETRY(Point, 4326) NOT NULL,
     node_type   VARCHAR(50) NOT NULL,
     building_id INTEGER,
-    floor       INTEGER,
+    floor       INTEGER DEFAULT 1,
     CONSTRAINT chk_node_id_format CHECK (node_id ~ '^[a-z0-9_]+$'),
     CONSTRAINT chk_node_type CHECK (node_type IN ('entrance', 'road', 'door', 'facility')),
     CONSTRAINT chk_floor_range CHECK (floor IS NULL OR (floor >= -10 AND floor <= 100))
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS rooms (
     node_id     VARCHAR(50),
     name        VARCHAR(200),
     description TEXT,
-    floor       INTEGER,
+    floor       INTEGER DEFAULT 1,
     capacity    INTEGER,
     room_type   VARCHAR(50),
     CONSTRAINT chk_room_id_format CHECK (room_id ~ '^[a-z0-9_]+$'),

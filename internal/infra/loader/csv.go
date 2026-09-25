@@ -113,7 +113,7 @@ func (s *CSVSeeder) SeedNodes(ctx context.Context, path string) error {
 		floor := nullableInt(r, 5)
 
 		_, err = s.pool.Exec(ctx,
-			`INSERT INTO nodes (node_id, geom, node_type, building_id, floor) VALUES ($1, ST_SetSRID(ST_MakePoint($2, $3), 4326), $4, $5, $6) ON CONFLICT (node_id) DO NOTHING`,
+			`INSERT INTO nodes (node_id, geom, node_type, building_id, floor) VALUES ($1, ST_SetSRID(ST_MakePoint($2, $3), 4326), $4, $5, COALESCE($6, 1)) ON CONFLICT (node_id) DO NOTHING`,
 			nodeID, lng, lat, nodeType, buildingID, floor)
 		if err != nil {
 			return fmt.Errorf(errLineWrap, i+2, err)
@@ -183,7 +183,7 @@ func (s *CSVSeeder) SeedRooms(ctx context.Context, path string) error {
 		roomType := nullableStr(r, 7)
 
 		_, err = s.pool.Exec(ctx,
-			`INSERT INTO rooms (room_id, building_id, node_id, name, description, floor, capacity, room_type) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT (room_id) DO NOTHING`,
+			`INSERT INTO rooms (room_id, building_id, node_id, name, description, floor, capacity, room_type) VALUES ($1, $2, $3, $4, $5, COALESCE($6, 1), $7, $8) ON CONFLICT (room_id) DO NOTHING`,
 			roomID, buildingID, nodeID, name, description, floor, capacity, roomType)
 		if err != nil {
 			return fmt.Errorf(errLineWrap, i+2, err)
