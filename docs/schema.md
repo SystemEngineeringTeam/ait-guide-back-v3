@@ -49,7 +49,7 @@
 | node_id     | VARCHAR(50)           | NOT NULL | アプリケーション用ID         |
 | geom        | GEOMETRY(Point, 4326) | NOT NULL | 地理座標（緯度経度）         |
 | node_type   | VARCHAR(50)           | NOT NULL | ノード種別                   |
-| building_id | INTEGER               | NULL     | 所属建物ID（屋内ノードのみ） |
+| building_id | INTEGER               | NOT NULL | 所属建物ID（建物に所属しない場合は-1、デフォルト-1） |
 | floor       | INTEGER               | NULL     | 階数（デフォルト1）          |
 
 **node_type の値:**
@@ -75,8 +75,8 @@
 
 **備考:**
 
-- 屋外ノード: `building_id` と `floor` はNULL
-- 屋内ノード: `building_id` が設定され、`floor` で階数を管理
+- 屋外ノード: `building_id` は -1（建物に所属しない）
+- 屋内ノード: `building_id` に所属建物IDが設定され、`floor` で階数を管理（デフォルト1）
 
 ---
 

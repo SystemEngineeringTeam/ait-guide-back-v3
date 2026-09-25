@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS nodes (
     node_id     VARCHAR(50) NOT NULL UNIQUE,
     geom        GEOMETRY(Point, 4326) NOT NULL,
     node_type   VARCHAR(50) NOT NULL,
-    building_id INTEGER,
+    building_id INTEGER NOT NULL DEFAULT -1,
     floor       INTEGER DEFAULT 1,
     CONSTRAINT chk_node_id_format CHECK (node_id ~ '^[a-z0-9_]+$'),
     CONSTRAINT chk_node_type CHECK (node_type IN ('entrance', 'road', 'door', 'facility')),

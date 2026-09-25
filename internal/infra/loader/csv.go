@@ -113,7 +113,7 @@ func (s *CSVSeeder) SeedNodes(ctx context.Context, path string) error {
 		floor := nullableInt(r, 5)
 
 		_, err = s.pool.Exec(ctx,
-			`INSERT INTO nodes (node_id, geom, node_type, building_id, floor) VALUES ($1, ST_SetSRID(ST_MakePoint($2, $3), 4326), $4, $5, COALESCE($6, 1)) ON CONFLICT (node_id) DO NOTHING`,
+			`INSERT INTO nodes (node_id, geom, node_type, building_id, floor) VALUES ($1, ST_SetSRID(ST_MakePoint($2, $3), 4326), $4, COALESCE($5, -1), COALESCE($6, 1)) ON CONFLICT (node_id) DO NOTHING`,
 			nodeID, lng, lat, nodeType, buildingID, floor)
 		if err != nil {
 			return fmt.Errorf(errLineWrap, i+2, err)

@@ -52,7 +52,7 @@ func (r *RouteRepository) FindRoute(ctx context.Context, sourceNodeID, targetNod
 	// edge列でedges_for_routingをJOINし、距離とコストを別々に取得
 	query := fmt.Sprintf(`
 		SELECT n.node_id, ST_Y(n.geom) AS lat, ST_X(n.geom) AS lng,
-				CASE WHEN n.building_id IS NOT NULL THEN true ELSE false END AS is_indoor,
+				CASE WHEN n.building_id <> -1 THEN true ELSE false END AS is_indoor,
 				r.agg_cost,
 				COALESCE(efr.distance, 0) AS edge_distance
 		FROM pgr_dijkstra(
