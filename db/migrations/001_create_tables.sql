@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS nodes (
     building_id INTEGER,
     floor       INTEGER,
     CONSTRAINT chk_node_id_format CHECK (node_id ~ '^[a-z0-9_]+$'),
-    CONSTRAINT chk_node_type CHECK (node_type IN ('entrance', 'road', 'door')),
+    CONSTRAINT chk_node_type CHECK (node_type IN ('entrance', 'road', 'door', 'facility')),
     CONSTRAINT chk_floor_range CHECK (floor IS NULL OR (floor >= -10 AND floor <= 100))
 );
 

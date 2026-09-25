@@ -57,13 +57,14 @@
 - `entrance`: 建物入口
 - `road`: 道路/廊下上のノード
 - `door`: 部屋のドア
+- `facility`: 建物自体を表すノード
 
 **制約:**
 
 - PRIMARY KEY (id)
 - UNIQUE (node_id)
 - CHECK (node*id ~ '^[a-z0-9*]+$')
-- CHECK (node_type IN ('entrance', 'road', 'door'))
+- CHECK (node_type IN ('entrance', 'road', 'door', 'facility'))
 - CHECK (floor IS NULL OR (floor >= -10 AND floor <= 100))
 
 **インデックス:**

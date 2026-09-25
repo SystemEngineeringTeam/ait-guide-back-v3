@@ -27,7 +27,7 @@ func NewNodeHandler(uc *usecase.NodeUsecase) *NodeHandler {
 //	@Tags			nodes
 //	@Produce		json
 //	@Param			node_id		query		string			false	"ノードIDでフィルタリング"
-//	@Param			node_type	query		string			false	"ノードタイプでフィルタリング（entrance, road, door）"
+//	@Param			node_type	query		string			false	"ノードタイプでフィルタリング（entrance, road, door, facility）"
 //	@Param			building_id	query		int				false	"建物IDでフィルタリング"
 //	@Param			floor		query		int				false	"階数でフィルタリング"
 //	@Param			limit		query		int				false	"返却するノードの最大数"	default(100)

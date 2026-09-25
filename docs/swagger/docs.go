@@ -209,7 +209,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "ノードタイプでフィルタリング（entrance, road, door）",
+                        "description": "ノードタイプでフィルタリング（entrance, road, door, facility）",
                         "name": "node_type",
                         "in": "query"
                     },

@@ -7,6 +7,7 @@ const (
 	NodeTypeEntrance NodeType = "entrance"
 	NodeTypeRoad     NodeType = "road"
 	NodeTypeDoor     NodeType = "door"
+	NodeTypeFacility NodeType = "facility"
 )
 
 // Node は経路ノードエンティティ。

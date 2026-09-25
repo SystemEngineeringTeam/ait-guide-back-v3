@@ -133,7 +133,7 @@ paths:
         in: query
         name: node_id
         type: string
-      - description: ノードタイプでフィルタリング（entrance, road, door）
+      - description: ノードタイプでフィルタリング（entrance, road, door, facility）
         in: query
         name: node_type
         type: string
