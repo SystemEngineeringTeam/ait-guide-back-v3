@@ -30,8 +30,8 @@ func (u *RouteUsecase) SearchRoute(ctx context.Context, lat, lng float64, buildi
 		return nil, service.ErrNodeNotFound
 	}
 
-	// 目的地の建物入口ノード検索
-	targetNode, err := u.nodeRepo.FindEntranceByBuildingID(ctx, buildingID)
+	// 目的地の建物に属するentrance/facilityノードのうち、現在地から最も近いものを検索
+	targetNode, err := u.nodeRepo.FindNearestTargetByBuildingID(ctx, buildingID, lat, lng)
 	if err != nil {
 		return nil, err
 	}

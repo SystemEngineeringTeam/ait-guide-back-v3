@@ -338,8 +338,9 @@ GET /api/nodes
    ↓
 2. API: 最寄りノード検索（PostGIS空間検索）
    ↓
-3. API: 目的地ノード特定（建物入口ノードを使用）
-  - 目的の建物IDを持つentranceノードを検索
+3. API: 目的地ノード特定（entrance/facilityノードを使用）
+  - 目的の建物IDを持つentrance/facilityノードのうち、現在地から最も近いものを検索
+  - entranceが存在しない施設はfacilityノードにフォールバック
    ↓
 4. API: オプションに応じてエッジフィルタリング
   - level: 指定以上の主要度のエッジを選択 重要度：1(高) ~ 5(低)

@@ -85,20 +85,21 @@ func (r *NodeRepository) FindNearestByLatLng(ctx context.Context, lat, lng float
 	return &n, nil
 }
 
-func (r *NodeRepository) FindEntranceByBuildingID(ctx context.Context, buildingID int) (*model.Node, error) {
+func (r *NodeRepository) FindNearestTargetByBuildingID(ctx context.Context, buildingID int, lat, lng float64) (*model.Node, error) {
 	var n model.Node
 	err := r.pool.QueryRow(ctx,
 		`SELECT id, node_id, ST_Y(geom) AS lat, ST_X(geom) AS lng, node_type, building_id, floor
 		 FROM nodes
-		 WHERE node_type = 'entrance' AND building_id = $1
+		 WHERE node_type IN ('entrance', 'facility') AND building_id = $1
+		 ORDER BY geom <-> ST_SetSRID(ST_MakePoint($2, $3), 4326)
 		 LIMIT 1`,
-		buildingID).
+		buildingID, lng, lat).
 		Scan(&n.ID, &n.NodeID, &n.Lat, &n.Lng, &n.NodeType, &n.BuildingID, &n.Floor)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return nil, nil
 		}
-		return nil, fmt.Errorf("failed to find entrance node: %w", err)
+		return nil, fmt.Errorf("failed to find nearest target node: %w", err)
 	}
 	return &n, nil
 }
