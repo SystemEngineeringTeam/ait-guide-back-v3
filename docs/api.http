@@ -1,0 +1,112 @@
+### ===========================
+### 経路探索WebAPI テストリクエスト
+### ===========================
+
+@baseUrl = http://localhost:8080/api
+
+### ----- ヘルスチェック -----
+
+### ヘルスチェック
+GET {{baseUrl}}/health
+
+### ----- 建物 -----
+
+### 建物一覧
+GET {{baseUrl}}/buildings
+
+### 建物一覧（件数制限）
+GET {{baseUrl}}/buildings?limit=5
+
+### 建物一覧（所属フィルター）
+GET {{baseUrl}}/buildings?affiliation=情報科学部
+
+### 建物詳細
+GET {{baseUrl}}/buildings/1
+
+### ----- 部屋 -----
+
+### 部屋一覧
+GET {{baseUrl}}/rooms
+
+### 部屋一覧（建物IDフィルター）
+GET {{baseUrl}}/rooms?building_id=1
+
+### 部屋一覧（階数フィルター）
+GET {{baseUrl}}/rooms?building_id=1&floor=1
+
+### 部屋一覧（部屋タイプフィルター）
+GET {{baseUrl}}/rooms?room_type=classroom
+
+### 部屋詳細
+GET {{baseUrl}}/rooms/room_101
+
+### ----- ノード -----
+
+### ノード一覧
+GET {{baseUrl}}/nodes
+
+### ノード一覧（件数制限）
+GET {{baseUrl}}/nodes?limit=10
+
+### ノード一覧（ノードIDフィルター）
+GET {{baseUrl}}/nodes?node_id=node_1
+
+### ノード一覧（ノードタイプフィルター）
+GET {{baseUrl}}/nodes?node_type=entrance
+
+### ノード一覧（建物・階数フィルター）
+GET {{baseUrl}}/nodes?building_id=1&floor=1
+
+### ----- 経路探索（新版） -----
+
+### 経路探索（デフォルトパラメータ）
+GET {{baseUrl}}/routes/search/1
+
+### 経路探索（現在位置指定）
+GET {{baseUrl}}/routes/search/1
+    ?lat=35.181531
+    &lng=137.109509
+
+### 経路探索（階段なし）
+GET {{baseUrl}}/routes/search/1
+    ?lat=35.181531
+    &lng=137.109509
+    &stairs=false
+
+### 経路探索（バリアフリー）
+GET {{baseUrl}}/routes/search/1
+    ?lat=35.181531
+    &lng=137.109509
+    &accessible=true
+
+### 経路探索（屋内優先）
+GET {{baseUrl}}/routes/search/1
+    ?lat=35.181531
+    &lng=137.109509
+    &indoor=true
+
+### 経路探索（レベル指定）
+GET {{baseUrl}}/routes/search/1
+    ?lat=35.181531
+    &lng=137.109509
+    &level=1
+
+### 経路探索（全オプション指定）
+GET {{baseUrl}}/routes/search/1
+    ?lat=35.181531
+    &lng=137.109509
+    &level=2
+    &stairs=false
+    &accessible=true
+    &indoor=true
+
+### ----- 経路探索（レガシー） -----
+
+### レガシー経路探索（デフォルト）
+GET {{baseUrl}}/get/route
+
+### レガシー経路探索（パラメータ指定）
+GET {{baseUrl}}/get/route
+    ?lat=35.18484898699119
+    &lng=137.11045368636874
+    &end=1

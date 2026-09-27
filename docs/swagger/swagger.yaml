@@ -1,0 +1,296 @@
+basePath: /api
+host: localhost:8080
+info:
+  contact: {}
+  description: 建物内外の経路情報を管理し、複数の重みパラメータを考慮した最適経路を提供するWebAPI
+  title: AIT Guide API
+  version: "3.0"
+paths:
+  /buildings:
+    get:
+      description: 建物の一覧を返す。所属でフィルタリング可能。
+      parameters:
+      - default: 100
+        description: 返却する建物の最大数
+        in: query
+        name: limit
+        type: integer
+      - description: 所属でフィルタリング
+        in: query
+        name: affiliation
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 建物一覧
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: サーバーエラー
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 建物一覧取得
+      tags:
+      - buildings
+  /buildings/{building_id}:
+    get:
+      description: 指定した建物IDの詳細情報（写真含む）を返す
+      parameters:
+      - description: 建物ID
+        in: path
+        name: building_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 建物詳細
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: パラメータ不正
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: 建物が見つからない
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: サーバーエラー
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 建物情報取得
+      tags:
+      - buildings
+  /get/route:
+    get:
+      description: 旧バージョンとの互換性のためのエンドポイント。距離のみを重みとして使用。
+      parameters:
+      - default: 35.181531
+        description: 現在地の緯度
+        in: query
+        name: lat
+        type: number
+      - default: 137.109509
+        description: 現在地の経度
+        in: query
+        name: lng
+        type: number
+      - default: 1
+        description: 目的地のノードID（nodes.id）
+        in: query
+        name: end
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 経路情報
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: ノード/経路が見つからない
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: サーバーエラー
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 経路探索（レガシー）
+      tags:
+      - routes
+  /health:
+    get:
+      description: APIの健全性を確認する
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: status と timestamp を返す
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: ヘルスチェック
+      tags:
+      - system
+  /nodes:
+    get:
+      description: ノードの一覧を返す。ノードID・タイプ・建物ID・階数でフィルタリング可能。
+      parameters:
+      - description: ノードIDでフィルタリング
+        in: query
+        name: node_id
+        type: string
+      - description: ノードタイプでフィルタリング（entrance, road, door）
+        in: query
+        name: node_type
+        type: string
+      - description: 建物IDでフィルタリング
+        in: query
+        name: building_id
+        type: integer
+      - description: 階数でフィルタリング
+        in: query
+        name: floor
+        type: integer
+      - default: 100
+        description: 返却するノードの最大数
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ノード一覧
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: サーバーエラー
+          schema:
+            additionalProperties: true
+            type: object
+      summary: ノード一覧取得
+      tags:
+      - nodes
+  /rooms:
+    get:
+      description: 部屋の一覧を返す。建物ID・階数・部屋タイプでフィルタリング可能。
+      parameters:
+      - description: 建物IDでフィルタリング
+        in: query
+        name: building_id
+        type: integer
+      - description: 階数でフィルタリング
+        in: query
+        name: floor
+        type: integer
+      - description: 部屋タイプでフィルタリング（classroom, office, lab, lecture_hall）
+        in: query
+        name: room_type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 部屋一覧
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: サーバーエラー
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 部屋一覧取得
+      tags:
+      - rooms
+  /rooms/{room_id}:
+    get:
+      description: 指定した部屋IDの詳細情報を返す
+      parameters:
+      - description: 部屋ID
+        in: path
+        name: room_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 部屋詳細
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: 部屋が見つからない
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: サーバーエラー
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 部屋情報取得
+      tags:
+      - rooms
+  /routes/search/{building_id}:
+    get:
+      description: 複数の重みパラメータとフィルタリングオプションを使用した経路探索
+      parameters:
+      - description: 目的地の建物ID
+        in: path
+        name: building_id
+        required: true
+        type: integer
+      - default: 35.181531
+        description: 現在地の緯度
+        in: query
+        name: lat
+        type: number
+      - default: 137.109509
+        description: 現在地の経度
+        in: query
+        name: lng
+        type: number
+      - default: 3
+        description: 道の優先度（0:距離のみ, 1:大通り優先〜5:脇道優先）
+        in: query
+        name: level
+        type: integer
+      - default: true
+        description: 階段を含む経路を許可するか
+        in: query
+        name: stairs
+        type: boolean
+      - default: false
+        description: バリアフリー経路を使用するか
+        in: query
+        name: accessible
+        type: boolean
+      - default: false
+        description: 屋内優先か
+        in: query
+        name: indoor
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 経路情報
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: パラメータ不正
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: ノード/建物/経路が見つからない
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: サーバーエラー
+          schema:
+            additionalProperties: true
+            type: object
+      summary: 経路探索
+      tags:
+      - routes
+swagger: "2.0"

@@ -23,3 +23,15 @@ go.work.sum
 
 # env file
 .env
+
+# Temporary files
+tmp/
+temp/*
+
+# Log files
+logs/
+
+# Seed files
+db/seeds/
+
+local/*

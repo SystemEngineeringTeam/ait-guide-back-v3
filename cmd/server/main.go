@@ -1,0 +1,137 @@
+// Package main はサーバーのエントリポイントを提供する。
+//
+//	@title			AIT Guide API
+//	@version		3.0
+//	@description	建物内外の経路情報を管理し、複数の重みパラメータを考慮した最適経路を提供するWebAPI
+//	@host			localhost:8080
+//	@BasePath		/api
+package main
+
+import (
+	"context"
+	"fmt"
+	"io"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"path/filepath"
+	"syscall"
+	"time"
+
+	_ "github.com/SystemEngineeringTeam/ait-guide-back-v3/docs/swagger"
+
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/config"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/handler"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/infra/loader"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/infra/postgres"
+	"github.com/SystemEngineeringTeam/ait-guide-back-v3/internal/usecase"
+	"github.com/gin-gonic/gin"
+)
+
+func setupLogger(logFile string) (*os.File, error) {
+	if err := os.MkdirAll(filepath.Dir(logFile), 0o755); err != nil {
+		return nil, fmt.Errorf("failed to create log directory: %w", err)
+	}
+
+	f, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open log file: %w", err)
+	}
+
+	multiWriter := io.MultiWriter(os.Stdout, f)
+	log.SetOutput(multiWriter)
+	gin.DefaultWriter = multiWriter
+	gin.DefaultErrorWriter = multiWriter
+
+	return f, nil
+}
+
+func main() {
+	cfg := config.Load()
+
+	// ログ設定
+	logFile, err := setupLogger(cfg.LogFile)
+	if err != nil {
+		log.Fatalf("failed to setup logger: %v", err)
+	}
+	defer func() {
+		if cerr := logFile.Close(); cerr != nil {
+			log.Printf("failed to close log file: %v", cerr)
+		}
+	}()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	// DB接続
+	pool, err := postgres.NewPool(ctx, cfg.Database.DSN())
+	if err != nil {
+		log.Fatalf("failed to connect to database: %v", err)
+	}
+	defer pool.Close()
+	log.Println("connected to database")
+
+	// マイグレーション
+	if err := postgres.Migrate(ctx, pool, "db/migrations"); err != nil {
+		log.Fatalf("failed to run migrations: %v", err)
+	}
+	log.Println("migrations completed")
+
+	// シードデータ投入
+	seeder := loader.NewCSVSeeder(pool)
+	if err := seeder.SeedAll(ctx, cfg.SeedDir); err != nil {
+		log.Fatalf("failed to seed data: %v", err)
+	}
+	log.Println("seed data loaded")
+
+	// DI: リポジトリ
+	buildingRepo := postgres.NewBuildingRepository(pool)
+	nodeRepo := postgres.NewNodeRepository(pool)
+	roomRepo := postgres.NewRoomRepository(pool)
+	routeRepo := postgres.NewRouteRepository(pool)
+
+	// DI: ユースケース
+	buildingUC := usecase.NewBuildingUsecase(buildingRepo)
+	nodeUC := usecase.NewNodeUsecase(nodeRepo)
+	roomUC := usecase.NewRoomUsecase(roomRepo)
+	routeUC := usecase.NewRouteUsecase(nodeRepo, routeRepo)
+
+	// DI: ハンドラー
+	healthH := handler.NewHealthHandler()
+	buildingH := handler.NewBuildingHandler(buildingUC)
+	nodeH := handler.NewNodeHandler(nodeUC)
+	roomH := handler.NewRoomHandler(roomUC)
+	routeH := handler.NewRouteHandler(routeUC)
+
+	// ルーター
+	router := handler.Router(healthH, buildingH, roomH, nodeH, routeH)
+
+	// サーバー起動
+	srv := &http.Server{
+		Addr:    fmt.Sprintf(":%d", cfg.Server.Port),
+		Handler: router,
+	}
+
+	go func() {
+		log.Printf("server starting on port %d", cfg.Server.Port)
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("failed to start server: %v", err)
+		}
+	}()
+
+	// Graceful shutdown
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	log.Println("shutting down server...")
+
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer shutdownCancel()
+
+	if err := srv.Shutdown(shutdownCtx); err != nil {
+		log.Fatalf("server forced to shutdown: %v", err)
+	}
+
+	log.Println("server exited")
+}
