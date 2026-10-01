@@ -7,6 +7,7 @@ const (
 	NodeTypeEntrance NodeType = "entrance"
 	NodeTypeRoad     NodeType = "road"
 	NodeTypeDoor     NodeType = "door"
+	NodeTypeFacility NodeType = "facility"
 )
 
 // Node は経路ノードエンティティ。
@@ -16,6 +17,6 @@ type Node struct {
 	Lat        float64
 	Lng        float64
 	NodeType   NodeType
-	BuildingID *int
+	BuildingID *int // DB上はNOT NULL（建物に属さない場合は-1）。nilにはならない
 	Floor      *int
 }

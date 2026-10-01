@@ -49,21 +49,22 @@
 | node_id     | VARCHAR(50)           | NOT NULL | アプリケーション用ID         |
 | geom        | GEOMETRY(Point, 4326) | NOT NULL | 地理座標（緯度経度）         |
 | node_type   | VARCHAR(50)           | NOT NULL | ノード種別                   |
-| building_id | INTEGER               | NULL     | 所属建物ID（屋内ノードのみ） |
-| floor       | INTEGER               | NULL     | 階数（屋内ノードのみ）       |
+| building_id | INTEGER               | NOT NULL | 所属建物ID（建物に所属しない場合は-1、デフォルト-1） |
+| floor       | INTEGER               | NULL     | 階数（デフォルト1）          |
 
 **node_type の値:**
 
 - `entrance`: 建物入口
 - `road`: 道路/廊下上のノード
 - `door`: 部屋のドア
+- `facility`: 建物自体を表すノード
 
 **制約:**
 
 - PRIMARY KEY (id)
 - UNIQUE (node_id)
 - CHECK (node*id ~ '^[a-z0-9*]+$')
-- CHECK (node_type IN ('entrance', 'road', 'door'))
+- CHECK (node_type IN ('entrance', 'road', 'door', 'facility'))
 - CHECK (floor IS NULL OR (floor >= -10 AND floor <= 100))
 
 **インデックス:**
@@ -74,8 +75,8 @@
 
 **備考:**
 
-- 屋外ノード: `building_id` と `floor` はNULL
-- 屋内ノード: `building_id` が設定され、`floor` で階数を管理
+- 屋外ノード: `building_id` は -1（建物に所属しない）
+- 屋内ノード: `building_id` に所属建物IDが設定され、`floor` で階数を管理（デフォルト1）
 
 ---
 
@@ -124,7 +125,7 @@
 | node_id     | VARCHAR(50)  | NULL     | ドアノードID (nodes.node_id) |
 | name        | VARCHAR(200) | NULL     | 部屋名                       |
 | description | TEXT         | NULL     | 部屋説明                     |
-| floor       | INTEGER      | NULL     | 階数                         |
+| floor       | INTEGER      | NULL     | 階数（デフォルト1）          |
 | capacity    | INTEGER      | NULL     | 収容人数                     |
 | room_type   | VARCHAR(50)  | NULL     | 部屋タイプ                   |
 

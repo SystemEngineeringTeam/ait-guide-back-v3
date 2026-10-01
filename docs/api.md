@@ -302,7 +302,7 @@ GET /api/nodes
 | パラメータ | 型     | 必須 | 説明                                                 |
 | ---------- | ------ | ---- | ---------------------------------------------------- |
 | node_id    | string | No   | ノードIDでフィルタリング                             |
-| node_type  | string | No   | ノードタイプでフィルタリング（entrance, road, door） |
+| node_type  | string | No   | ノードタイプでフィルタリング（entrance, road, door, facility） |
 | floor      | int    | No   | 階数でフィルタリング                                 |
 | limit      | int    | No   | 返却するノードの最大数（デフォルト100）              |
 

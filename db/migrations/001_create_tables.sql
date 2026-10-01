@@ -16,10 +16,10 @@ CREATE TABLE IF NOT EXISTS nodes (
     node_id     VARCHAR(50) NOT NULL UNIQUE,
     geom        GEOMETRY(Point, 4326) NOT NULL,
     node_type   VARCHAR(50) NOT NULL,
-    building_id INTEGER,
-    floor       INTEGER,
-    CONSTRAINT chk_node_id_format CHECK (node_id ~ '^[a-z0-9_]+$'),
-    CONSTRAINT chk_node_type CHECK (node_type IN ('entrance', 'road', 'door')),
+    building_id INTEGER NOT NULL DEFAULT -1,
+    floor       INTEGER DEFAULT 1,
+    CONSTRAINT chk_node_id_format CHECK (node_id ~ '^[a-z0-9_-]+$'),
+    CONSTRAINT chk_node_type CHECK (node_type IN ('entrance', 'road', 'door', 'facility')),
     CONSTRAINT chk_floor_range CHECK (floor IS NULL OR (floor >= -10 AND floor <= 100))
 );
 
@@ -37,8 +37,8 @@ CREATE TABLE IF NOT EXISTS edges (
     has_stairs     BOOLEAN NOT NULL,
     is_accessible  BOOLEAN NOT NULL,
     is_indoor      BOOLEAN NOT NULL,
-    CONSTRAINT chk_edge_from_format CHECK (node_id_from ~ '^[a-z0-9_]+$'),
-    CONSTRAINT chk_edge_target_format CHECK (node_id_target ~ '^[a-z0-9_]+$'),
+    CONSTRAINT chk_edge_from_format CHECK (node_id_from ~ '^[a-z0-9_-]+$'),
+    CONSTRAINT chk_edge_target_format CHECK (node_id_target ~ '^[a-z0-9_-]+$'),
     CONSTRAINT chk_edge_no_self_ref CHECK (node_id_from != node_id_target),
     CONSTRAINT chk_distance_positive CHECK (distance >= 0)
 );
@@ -55,11 +55,11 @@ CREATE TABLE IF NOT EXISTS rooms (
     node_id     VARCHAR(50),
     name        VARCHAR(200),
     description TEXT,
-    floor       INTEGER,
+    floor       INTEGER DEFAULT 1,
     capacity    INTEGER,
     room_type   VARCHAR(50),
     CONSTRAINT chk_room_id_format CHECK (room_id ~ '^[a-z0-9_]+$'),
-    CONSTRAINT chk_room_node_id_format CHECK (node_id IS NULL OR node_id ~ '^[a-z0-9_]+$'),
+    CONSTRAINT chk_room_node_id_format CHECK (node_id IS NULL OR node_id ~ '^[a-z0-9_-]+$'),
     CONSTRAINT chk_room_capacity CHECK (capacity IS NULL OR capacity >= 0),
     CONSTRAINT chk_room_floor_range CHECK (floor IS NULL OR (floor >= -10 AND floor <= 100))
 );
