@@ -24,20 +24,36 @@
 
 ### buildings（建物）
 
-| カラム名    | 型           | NULL     | 説明     |
-| ----------- | ------------ | -------- | -------- |
-| id          | SERIAL       | NOT NULL | 主キー   |
-| name        | VARCHAR(200) | NOT NULL | 建物名   |
-| description | TEXT         | NULL     | 建物説明 |
-| affiliation | VARCHAR(100) | NULL     | 所属     |
+| カラム名    | 型           | NULL     | 説明                                                                           |
+| ----------- | ------------ | -------- | ------------------------------------------------------------------------------ |
+| id          | SERIAL       | NOT NULL | 内部主キー（DB専用、アプリケーション/APIからは参照しない）                   |
+| building_no | INTEGER      | NOT NULL | 外部公開ID。`nodes`/`rooms`/`photos`.`building_id`およびAPIの`building_id`が参照する値（旧`buildings.csv`の`id`列、欠番あり） |
+| key         | VARCHAR(50)  | NULL     | 安定した文字列キー（`buildings.csv`の`key`列、例: `B1`, `AIT_PLAZA`）。未設定の建物はNULL |
+| name        | VARCHAR(200) | NOT NULL | 建物名                                                                         |
+| description | TEXT         | NULL     | 建物説明                                                                       |
+| affiliation | VARCHAR(100) | NULL     | 所属                                                                           |
 
 **制約:**
 
 - PRIMARY KEY (id)
+- UNIQUE (building_no)
+- UNIQUE (key)
 
 **インデックス:** なし（小規模データのため）
 
-**備考:** 建物の入口ノードは `nodes` テーブルで `node_type='entrance'` および `building_id` で特定
+**備考:**
+
+- 建物の入口ノードは `nodes` テーブルで `node_type='entrance'` および `building_id` で特定
+- `nodes`/`rooms`/`photos`.`building_id`は`buildings.id`（内部主キー）ではなく`buildings.building_no`を参照する点に注意
+
+**TODO（残タスク）:**
+
+- 現在APIの`building_id`は`buildings.building_no`（数値、欠番あり）を参照しているが、将来的には安定した文字列キーである`buildings.key`へ移行したい
+- 移行時は以下の対応が必要:
+  - `nodes`/`rooms`/`photos`.`building_id`を`key`参照に置き換える（カラム追加 or 置き換え）
+  - `/routes/search/{building_id}`・`/buildings/{building_id}`等のAPIパスパラメータを`key`ベースに変更
+  - フロントエンド（ait-guide-front-v3）側の呼び出し箇所の追従
+- 当面は`building_no`を正とし、`key`は付随情報として提供する段階的移行とする
 
 ---
 

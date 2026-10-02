@@ -51,12 +51,13 @@ func (h *BuildingHandler) List(c *gin.Context) {
 	}
 
 	type buildingResp struct {
-		ID   int    `json:"id"`
-		Name string `json:"name"`
+		ID   int     `json:"id"`
+		Key  *string `json:"key,omitempty"`
+		Name string  `json:"name"`
 	}
 	result := make([]buildingResp, len(buildings))
 	for i, b := range buildings {
-		result[i] = buildingResp{ID: b.ID, Name: b.Name}
+		result[i] = buildingResp{ID: b.ID, Key: b.Key, Name: b.Name}
 	}
 
 	respondSuccess(c, result)
@@ -102,6 +103,7 @@ func (h *BuildingHandler) GetByID(c *gin.Context) {
 
 	respondSuccess(c, gin.H{
 		"id":          b.ID,
+		"key":         b.Key,
 		"name":        b.Name,
 		"description": b.Description,
 		"photos":      photos,

@@ -20,7 +20,7 @@ func NewBuildingRepository(pool *pgxpool.Pool) *BuildingRepository {
 }
 
 func (r *BuildingRepository) FindAll(ctx context.Context, limit int, affiliation *string) ([]model.Building, error) {
-	query := `SELECT id, name, description, affiliation FROM buildings WHERE 1=1`
+	query := `SELECT building_no, key, name, description, affiliation FROM buildings WHERE 1=1`
 	args := []any{}
 	argIdx := 1
 
@@ -30,7 +30,7 @@ func (r *BuildingRepository) FindAll(ctx context.Context, limit int, affiliation
 		argIdx++
 	}
 
-	query += fmt.Sprintf(` ORDER BY id LIMIT $%d`, argIdx)
+	query += fmt.Sprintf(` ORDER BY building_no LIMIT $%d`, argIdx)
 	args = append(args, limit)
 
 	rows, err := r.pool.Query(ctx, query, args...)
@@ -42,7 +42,7 @@ func (r *BuildingRepository) FindAll(ctx context.Context, limit int, affiliation
 	var buildings []model.Building
 	for rows.Next() {
 		var b model.Building
-		if err := rows.Scan(&b.ID, &b.Name, &b.Description, &b.Affiliation); err != nil {
+		if err := rows.Scan(&b.ID, &b.Key, &b.Name, &b.Description, &b.Affiliation); err != nil {
 			return nil, fmt.Errorf("failed to scan building: %w", err)
 		}
 		buildings = append(buildings, b)
@@ -54,8 +54,8 @@ func (r *BuildingRepository) FindAll(ctx context.Context, limit int, affiliation
 func (r *BuildingRepository) FindByID(ctx context.Context, id int) (*model.Building, error) {
 	var b model.Building
 	err := r.pool.QueryRow(ctx,
-		`SELECT id, name, description, affiliation FROM buildings WHERE id = $1`, id).
-		Scan(&b.ID, &b.Name, &b.Description, &b.Affiliation)
+		`SELECT building_no, key, name, description, affiliation FROM buildings WHERE building_no = $1`, id).
+		Scan(&b.ID, &b.Key, &b.Name, &b.Description, &b.Affiliation)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return nil, nil
