@@ -36,6 +36,7 @@ func (s *CSVSeeder) SeedAll(ctx context.Context, seedDir string) error {
 		seed  func(ctx context.Context, path string) error
 	}{
 		{"buildings.csv", "buildings", s.SeedBuildings},
+		{"memo.csv", "buildings.key", s.SeedBuildingKeys},
 		{"nodes.csv", "nodes", s.SeedNodes},
 		{"edges.csv", "edges", s.SeedEdges},
 		{"rooms.csv", "rooms", s.SeedRooms},
@@ -58,7 +59,8 @@ func (s *CSVSeeder) SeedAll(ctx context.Context, seedDir string) error {
 }
 
 // SeedBuildings はbuildings.csvを投入する。
-// CSV形式: id,name,description,affiliation
+// CSV形式: building_no,name,description,affiliation
+// building_noはbuildings.csvの"id"列（主キーではなく、nodes/rooms/photos.building_idおよびAPIが参照する値）
 func (s *CSVSeeder) SeedBuildings(ctx context.Context, path string) error {
 	records, err := readCSV(path)
 	if err != nil {
@@ -69,7 +71,7 @@ func (s *CSVSeeder) SeedBuildings(ctx context.Context, path string) error {
 		if len(r) < 2 {
 			return fmt.Errorf(errInsufficientColumns, i+2)
 		}
-		id, err := strconv.Atoi(r[0])
+		buildingNo, err := strconv.Atoi(r[0])
 		if err != nil {
 			return fmt.Errorf("line %d: invalid id: %w", i+2, err)
 		}
@@ -78,8 +80,40 @@ func (s *CSVSeeder) SeedBuildings(ctx context.Context, path string) error {
 		affiliation := nullableStr(r, 3)
 
 		_, err = s.pool.Exec(ctx,
-			`INSERT INTO buildings (id, name, description, affiliation) VALUES ($1, $2, $3, $4) ON CONFLICT (id) DO NOTHING`,
-			id, name, description, affiliation)
+			`INSERT INTO buildings (building_no, name, description, affiliation) VALUES ($1, $2, $3, $4) ON CONFLICT (building_no) DO NOTHING`,
+			buildingNo, name, description, affiliation)
+		if err != nil {
+			return fmt.Errorf(errLineWrap, i+2, err)
+		}
+	}
+	return nil
+}
+
+// SeedBuildingKeys はmemo.csvを投入する（buildings.keyの更新）。
+// CSV形式: building_no,key,name
+// building_noがbuildings.csvに存在しない行（未登録の建物）は対象外としてスキップする。
+func (s *CSVSeeder) SeedBuildingKeys(ctx context.Context, path string) error {
+	records, err := readCSV(path)
+	if err != nil {
+		return err
+	}
+
+	for i, r := range records {
+		if len(r) < 2 {
+			return fmt.Errorf(errInsufficientColumns, i+2)
+		}
+		buildingNo, err := strconv.Atoi(r[0])
+		if err != nil {
+			return fmt.Errorf("line %d: invalid id: %w", i+2, err)
+		}
+		key := nullableStr(r, 1)
+		if key == nil {
+			continue
+		}
+
+		_, err = s.pool.Exec(ctx,
+			`UPDATE buildings SET key = $2 WHERE building_no = $1`,
+			buildingNo, key)
 		if err != nil {
 			return fmt.Errorf(errLineWrap, i+2, err)
 		}

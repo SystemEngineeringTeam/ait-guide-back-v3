@@ -5,6 +5,8 @@ CREATE EXTENSION IF NOT EXISTS pgrouting;
 -- buildings
 CREATE TABLE IF NOT EXISTS buildings (
     id          SERIAL PRIMARY KEY,
+    building_no INTEGER NOT NULL UNIQUE, -- 旧buildings.csvのid。nodes/rooms/photos.building_idおよびAPIのbuilding_idはこちらを参照する
+    key         VARCHAR(50) UNIQUE,      -- memo.csv由来の安定した文字列キー（例: B1, AIT_PLAZA）
     name        VARCHAR(200) NOT NULL,
     description TEXT,
     affiliation VARCHAR(100)
@@ -16,7 +18,7 @@ CREATE TABLE IF NOT EXISTS nodes (
     node_id     VARCHAR(50) NOT NULL UNIQUE,
     geom        GEOMETRY(Point, 4326) NOT NULL,
     node_type   VARCHAR(50) NOT NULL,
-    building_id INTEGER NOT NULL DEFAULT -1,
+    building_id INTEGER NOT NULL DEFAULT -1, -- buildings.building_noを参照（建物に属さない場合は-1）
     floor       INTEGER DEFAULT 1,
     CONSTRAINT chk_node_id_format CHECK (node_id ~ '^[a-z0-9_-]+$'),
     CONSTRAINT chk_node_type CHECK (node_type IN ('entrance', 'road', 'door', 'facility')),
@@ -51,7 +53,7 @@ CREATE INDEX IF NOT EXISTS idx_edges_indoor ON edges (is_indoor);
 CREATE TABLE IF NOT EXISTS rooms (
     id          SERIAL PRIMARY KEY,
     room_id     VARCHAR(50) NOT NULL UNIQUE,
-    building_id INTEGER NOT NULL,
+    building_id INTEGER NOT NULL, -- buildings.building_noを参照
     node_id     VARCHAR(50),
     name        VARCHAR(200),
     description TEXT,
@@ -71,7 +73,7 @@ CREATE INDEX IF NOT EXISTS idx_rooms_type ON rooms (room_type);
 -- photos
 CREATE TABLE IF NOT EXISTS photos (
     id            SERIAL PRIMARY KEY,
-    building_id   INTEGER NOT NULL,
+    building_id   INTEGER NOT NULL, -- buildings.building_noを参照
     url           TEXT NOT NULL,
     caption       TEXT,
     display_order INTEGER NOT NULL,

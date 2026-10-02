@@ -24,20 +24,27 @@
 
 ### buildings（建物）
 
-| カラム名    | 型           | NULL     | 説明     |
-| ----------- | ------------ | -------- | -------- |
-| id          | SERIAL       | NOT NULL | 主キー   |
-| name        | VARCHAR(200) | NOT NULL | 建物名   |
-| description | TEXT         | NULL     | 建物説明 |
-| affiliation | VARCHAR(100) | NULL     | 所属     |
+| カラム名    | 型           | NULL     | 説明                                                                           |
+| ----------- | ------------ | -------- | ------------------------------------------------------------------------------ |
+| id          | SERIAL       | NOT NULL | 内部主キー（DB専用、アプリケーション/APIからは参照しない）                   |
+| building_no | INTEGER      | NOT NULL | 外部公開ID。`nodes`/`rooms`/`photos`.`building_id`およびAPIの`building_id`が参照する値（旧`buildings.csv`の`id`列、欠番あり） |
+| key         | VARCHAR(50)  | NULL     | 安定した文字列キー（`memo.csv`由来、例: `B1`, `AIT_PLAZA`）。未登録の建物はNULL |
+| name        | VARCHAR(200) | NOT NULL | 建物名                                                                         |
+| description | TEXT         | NULL     | 建物説明                                                                       |
+| affiliation | VARCHAR(100) | NULL     | 所属                                                                           |
 
 **制約:**
 
 - PRIMARY KEY (id)
+- UNIQUE (building_no)
+- UNIQUE (key)
 
 **インデックス:** なし（小規模データのため）
 
-**備考:** 建物の入口ノードは `nodes` テーブルで `node_type='entrance'` および `building_id` で特定
+**備考:**
+
+- 建物の入口ノードは `nodes` テーブルで `node_type='entrance'` および `building_id` で特定
+- `nodes`/`rooms`/`photos`.`building_id`は`buildings.id`（内部主キー）ではなく`buildings.building_no`を参照する点に注意
 
 ---
 
