@@ -53,7 +53,8 @@ func (u *RouteUsecase) SearchRoute(ctx context.Context, lat, lng float64, buildi
 }
 
 // SearchRouteLegacy は経路探索を実行する（旧バージョン）。
-func (u *RouteUsecase) SearchRouteLegacy(ctx context.Context, lat, lng float64, endID int) (*model.Route, error) {
+// endはbuildings.building_no（建物ID）として扱い、現在地から最も近いentrance/facilityノードへ解決する。
+func (u *RouteUsecase) SearchRouteLegacy(ctx context.Context, lat, lng float64, buildingID int) (*model.Route, error) {
 	// 最寄りノード検索
 	sourceNode, err := u.nodeRepo.FindNearestByLatLng(ctx, lat, lng)
 	if err != nil {
@@ -63,13 +64,22 @@ func (u *RouteUsecase) SearchRouteLegacy(ctx context.Context, lat, lng float64, 
 		return nil, service.ErrNodeNotFound
 	}
 
+	// 目的地の建物に属するentrance/facilityノードのうち、現在地から最も近いものを検索
+	targetNode, err := u.nodeRepo.FindNearestTargetByBuildingID(ctx, buildingID, lat, lng)
+	if err != nil {
+		return nil, err
+	}
+	if targetNode == nil {
+		return nil, service.ErrBuildingNotFound
+	}
+
 	// デフォルトオプションで経路探索
 	option := model.RouteOption{
 		Level:  3,
 		Stairs: true,
 	}
 	weight := service.CostWeightFromOption(option)
-	route, err := u.routeRepo.FindRoute(ctx, sourceNode.ID, endID, option, weight)
+	route, err := u.routeRepo.FindRoute(ctx, sourceNode.ID, targetNode.ID, option, weight)
 	if err != nil {
 		return nil, err
 	}

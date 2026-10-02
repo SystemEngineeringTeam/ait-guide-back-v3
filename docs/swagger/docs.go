@@ -137,7 +137,7 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "default": 1,
-                        "description": "目的地のノードID（nodes.id）",
+                        "description": "目的地の建物ID（buildings.building_no）",
                         "name": "end",
                         "in": "query"
                     }
@@ -151,7 +151,7 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "ノード/経路が見つからない",
+                        "description": "ノード/建物/経路が見つからない",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
