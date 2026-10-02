@@ -28,7 +28,7 @@
 | ----------- | ------------ | -------- | ------------------------------------------------------------------------------ |
 | id          | SERIAL       | NOT NULL | 内部主キー（DB専用、アプリケーション/APIからは参照しない）                   |
 | building_no | INTEGER      | NOT NULL | 外部公開ID。`nodes`/`rooms`/`photos`.`building_id`およびAPIの`building_id`が参照する値（旧`buildings.csv`の`id`列、欠番あり） |
-| key         | VARCHAR(50)  | NULL     | 安定した文字列キー（`memo.csv`由来、例: `B1`, `AIT_PLAZA`）。未登録の建物はNULL |
+| key         | VARCHAR(50)  | NULL     | 安定した文字列キー（`buildings.csv`の`key`列、例: `B1`, `AIT_PLAZA`）。未設定の建物はNULL |
 | name        | VARCHAR(200) | NOT NULL | 建物名                                                                         |
 | description | TEXT         | NULL     | 建物説明                                                                       |
 | affiliation | VARCHAR(100) | NULL     | 所属                                                                           |
@@ -52,7 +52,6 @@
 - 移行時は以下の対応が必要:
   - `nodes`/`rooms`/`photos`.`building_id`を`key`参照に置き換える（カラム追加 or 置き換え）
   - `/routes/search/{building_id}`・`/buildings/{building_id}`等のAPIパスパラメータを`key`ベースに変更
-  - 全`key`が揃っていない建物（`buildings.csv`にあって`memo.csv`に無いもの。2026-10時点で building_no 56-64 が該当）のkey採番
   - フロントエンド（ait-guide-front-v3）側の呼び出し箇所の追従
 - 当面は`building_no`を正とし、`key`は付随情報として提供する段階的移行とする
 
