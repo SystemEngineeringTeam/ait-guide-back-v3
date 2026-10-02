@@ -85,7 +85,7 @@ paths:
         name: lng
         type: number
       - default: 1
-        description: 目的地のノードID（nodes.id）
+        description: 目的地の建物ID（buildings.building_no）
         in: query
         name: end
         type: integer
@@ -98,7 +98,7 @@ paths:
             additionalProperties: true
             type: object
         "404":
-          description: ノード/経路が見つからない
+          description: ノード/建物/経路が見つからない
           schema:
             additionalProperties: true
             type: object
