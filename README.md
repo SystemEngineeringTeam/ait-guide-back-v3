@@ -111,7 +111,11 @@ go mod tidy
 make run          # go run cmd/server/main.go
 ```
 
-起動時に `db/migrations/` のマイグレーションと `SEED_DIR` のCSVが自動投入される。
+起動時に `db/migrations/` のマイグレーションと `SEED_DIR` のCSVが自動投入される。シード投入は`buildings`/`nodes`こそ`ON CONFLICT DO NOTHING`で重複を防ぐが、`edges`は防止策が無いため、**単純な再起動では`db/seeds`の更新が正しく反映されない**（`edges`が多重投入される）。更新後は以下でテーブルを初期化してから再投入すること。
+
+```bash
+make reseed        # シード対象テーブルをTRUNCATEしてappコンテナを再起動
+```
 
 ## 開発コマンド
 

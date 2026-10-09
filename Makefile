@@ -1,7 +1,7 @@
 .PHONY: help dev dev-build prod prod-build down down-v \
        logs logs-db \
        run build test test-cover fmt vet lint swag \
-       db-up db-psql
+       db-up db-psql reseed
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
@@ -41,6 +41,10 @@ db-up: ## Start only the database
 
 db-psql: ## Connect to database via psql
 	docker compose exec db psql -U aitguide -d aitguide
+
+reseed: ## Truncate seed tables and restart app to reload db/seeds data
+	docker compose exec db psql -U aitguide -d aitguide -c "TRUNCATE photos, rooms, edges, nodes, buildings RESTART IDENTITY CASCADE;"
+	docker compose restart app
 
 # ─── Local development ──────────────────────────────────
 run: ## Run server locally
