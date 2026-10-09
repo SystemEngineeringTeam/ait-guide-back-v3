@@ -43,7 +43,7 @@ func Load() *Config {
 			Password: getEnv("DB_PASSWORD", "aitguide"),
 			DBName:   getEnv("DB_NAME", "aitguide"),
 		},
-		SeedDir: getEnv("SEED_DIR", "db/seeds"),
+		SeedDir: getEnv("SEED_DIR", "db/seeds/default"),
 		LogFile: getEnv("LOG_FILE", "logs/server.log"),
 	}
 }

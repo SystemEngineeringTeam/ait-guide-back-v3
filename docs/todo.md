@@ -58,7 +58,7 @@
 - `edges`テーブルに`is_covered`（または`is_roofed`）BOOLEANカラムを追加するマイグレーション
   - `is_indoor = TRUE`の行は基本的に`is_covered = TRUE`（建物内は雨に濡れない）
   - `is_indoor = FALSE`でも`is_covered = TRUE`になり得る行（屋根付き屋外通路）を区別
-- `db/seeds/edges.csv`のCSVフォーマットに列を追加し、ローダー（`internal/infra/loader/csv.go`）を対応させる
+- `db/seeds/default/edges.csv`のCSVフォーマットに列を追加し、ローダー（`internal/infra/loader/csv.go`）を対応させる
 - `model.RouteOption.Indoor`を「雨に濡れないルート優先」の意味に寄せるか、新たに`Covered`相当のオプションを追加するか設計し、`service.CostWeightFromOption`等のコスト計算ロジックを見直す
 - `docs/domain-rules.md`・`docs/schema.md`の該当記述を更新
 
@@ -66,7 +66,7 @@
 
 **現状:**
 
-- `buildings.description`・`photos`テーブルは存在するが、`db/seeds/buildings.csv`の`description`列は全行空欄、`photos.csv`も未投入
+- `buildings.description`・`photos`テーブルは存在するが、`db/seeds/default/buildings.csv`の`description`列は全行空欄、`photos.csv`も未投入
 - `/buildings/{building_id}`は写真・説明を返せる実装になっているが、データが無いため実質機能していない
 
 **やりたいこと:**
@@ -77,14 +77,14 @@
 **想定する対応:**
 
 - 建物ごとの説明文・写真素材を収集
-- `db/seeds/buildings.csv`の`description`/`affiliation`列を埋める
-- `db/seeds/photos.csv`（現状未作成）を新設し投入する
+- `db/seeds/default/buildings.csv`の`description`/`affiliation`列を埋める
+- `db/seeds/default/photos.csv`（現状未作成）を新設し投入する
 
 ## 5. 部屋を含めた経路探索
 
 **現状:**
 
-- `rooms`テーブル・`rooms.csv`のローダー（`SeedRooms`）は実装済みだが、`db/seeds/rooms.csv`自体が未作成で部屋データが投入されていない
+- `rooms`テーブル・`rooms.csv`のローダー（`SeedRooms`）は実装済みだが、`db/seeds/default/rooms.csv`自体が未作成で部屋データが投入されていない
 - 経路探索（`SearchRoute`/`SearchRouteLegacy`）は建物単位（`entrance`/`facility`）までしか目的地にできず、部屋（`door`ノード）を目的地にする手段がない
 
 **やりたいこと:**
@@ -93,7 +93,7 @@
 
 **想定する対応:**
 
-- `db/seeds/rooms.csv`を作成し、各部屋と`node_id`（`door`ノード）の対応を投入する
+- `db/seeds/default/rooms.csv`を作成し、各部屋と`node_id`（`door`ノード）の対応を投入する
 - 経路探索APIに部屋ID（`room_id`）指定の経路を追加する（建物ID解決と同様に、room_idから対応する`door`ノードを引く`FindByRoomID`相当のリポジトリメソッドが必要）
 - 建物の入口から部屋のドアまでの屋内経路（`is_indoor = TRUE`のエッジ）が正しく繋がっているか、シードデータ側の整備も必要
 
@@ -136,12 +136,13 @@
 
 **現状:**
 
-- `SEED_DIR`（デフォルト`db/seeds`）配下の単一のnodes/edges/buildings等のCSVのみを前提にしたデータ投入・経路探索になっている
+- `SEED_DIR`（デフォルト`db/seeds/default`）配下の単一のnodes/edges/buildings等のCSVのみを前提にしたデータ投入・経路探索になっている
 - 学園祭等のイベント時に、通常と異なる通行可否・臨時設置の出店/設備などを反映した「特殊マップ」に切り替える仕組みがない
+- `db/seeds/events/<年>/<イベント名>/`というディレクトリ構成のみ作成済み（[db/seeds/events/README.md](../db/seeds/events/README.md)参照）。読み込み側の実装は未着手
 
 **やりたいこと:**
 
-- `db/seeds/event/<イベント名>/`のようなディレクトリを設け、イベント開催時のみ使うデータ（臨時ノード・エッジ・通行止め情報等）を格納できるようにする
+- `db/seeds/events/<年>/<イベント名>/`配下に、イベント開催時のみ使うデータ（臨時ノード・エッジ・通行止め情報等）を格納できるようにする
 - アプリケーション起動時にイベント名を指定すると、そのイベント用データを反映した状態で立ち上がるようにする
 - デフォルトマップとイベントマップの「つなぎ込み」（イベント用ノード/エッジをデフォルトのグラフにどう合成するか）の設計が重要な検討事項
 

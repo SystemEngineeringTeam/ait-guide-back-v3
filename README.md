@@ -38,7 +38,10 @@
 │   └── config/            # 設定管理
 ├── db/
 │   ├── migrations/        # マイグレーションSQL
-│   └── seeds/              # 投入用CSV（.gitignore対象、各自で用意）
+│   ├── seeds/              # 投入用CSV（Git管理）
+│   │   ├── default/         # 通常時のベースマップ
+│   │   └── events/           # 将来のイベントマップ拡張用（<年>/<イベント名>/）
+│   └── tools/seedfix/      # シードCSVの不整合を自動修正するスタンドアロンツール
 ├── docs/                   # API仕様・スキーマ・ドメインルール・Swagger
 ├── compose.yaml            # Docker Compose（共通: DB）
 ├── compose.override.yaml   # Docker Compose（開発: ホットリロード）
@@ -66,20 +69,29 @@ DB_PASSWORD=aitguide
 DB_NAME=aitguide
 
 # Seed
-SEED_DIR=db/seeds
+SEED_DIR=db/seeds/default
 ```
 
 ### 2. シードデータ
 
-`db/seeds/` 配下に以下のCSVを配置する（`.gitignore`対象のため各自用意、未配置のファイルはスキップされる）。
+`db/seeds/default/` 配下のCSVはGit管理されており、起動時に`SEED_DIR`から順に投入される（未配置のファイルはスキップされる）。
 
 | ファイル | 投入順 | 内容 |
 | --- | --- | --- |
-| `buildings.csv` | 1 | 建物 |
+| `buildings.csv` | 1 | 建物（`id`=`building_no`、`key`=安定文字列キー） |
 | `nodes.csv` | 2 | 経路ノード（entrance/road/door/facility） |
 | `edges.csv` | 3 | ノード間のエッジ |
-| `rooms.csv` | 4 | 部屋 |
-| `photos.csv` | 5 | 建物写真 |
+| `rooms.csv` | 4 | 部屋（未作成、[docs/todo.md](./docs/todo.md)参照） |
+| `photos.csv` | 5 | 建物写真（未作成、[docs/todo.md](./docs/todo.md)参照） |
+
+`nodes.csv`/`edges.csv`は外部のマップ編集ツールから再取得すると、列数不整合や不要な列混入など既知の不整合が再発しやすい。投入前に以下のツールで正規化できる。
+
+```bash
+go run ./db/tools/seedfix -dry-run   # 変更内容を確認のみ
+go run ./db/tools/seedfix            # 実際に修正を書き込む
+```
+
+`db/seeds/events/`配下は、学園祭等のイベント開催時のみ使う臨時データ用のディレクトリ（`db/seeds/events/<年>/<イベント名>/`）。現状はディレクトリ構成のみで、読み込み側の実装は未対応（[docs/todo.md](./docs/todo.md)の「8. イベントなどの特殊マップの適用」参照）。
 
 ### 3. 起動（Docker、推奨）
 

@@ -31,7 +31,7 @@ temp/*
 # Log files
 logs/
 
-# Seed files
-db/seeds/
+# Seed files（CSVはGit管理対象。エクスポート用JSON等の副産物のみ除外）
+db/seeds/**/*.json
 
 local/*
