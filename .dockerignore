@@ -21,8 +21,10 @@ compose.yaml
 .env
 .air.toml
 
-# Documentation
-docs/
+# Documentation（docs/swagger はビルド対象コードのため除外しない）
+docs/*.md
+docs/*.http
+docs/*.drawio
 *.md
 
 # IDE / editor
